@@ -1,6 +1,7 @@
 #include "Triangle.h"
 
-Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0), _x(0), _y(0), _z(0)
+Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0),
+    _position(glm::mat4(1.0f))
 {
 }
 
@@ -15,13 +16,13 @@ Triangle::~Triangle(void)
 bool Triangle::Init(pvr::Shell* shell, uint32_t mvpLoc)
 {
     GLfloat afVertices[] = { // Vertex 1
-                            -0.4f+_x, -0.4f+_y, -2.0f+_z,    // Position 1
+                            -0.4f, -0.4f, -0.0f,    // Position 1
                              0.0f, 0.0f,                    // Texture coodinate 1
                              // Vertex 2
-                             0.4f+_x, -0.4f+_y, -2.0f+_z,    // Position 2
+                             0.4f, -0.4f, -0.0f,    // Position 2
                              1.0f, 0.0f,                    // Texture coodinate 2
                              // Vertex 3
-                             0.0f+_x,  0.4f+_y, -2.0f+_z,    // Position 3
+                             0.0f,  0.4f, -0.0f,    // Position 3
                              0.5f, 1.0f,                    // Texture coodinate 3
                              };
 
@@ -50,12 +51,12 @@ bool Triangle::Init(pvr::Shell* shell, uint32_t mvpLoc)
     return true;
 }
 
-void Triangle::Render(glm::mat4 mVP)
+void Triangle::Render(glm::mat4 projection)
 {
     unsigned int _stride = 5 * sizeof(GLfloat);
     // Pass the View Matrix to the shader.
     // Since we are not translating the triangle we do not need a Model Matrix.
-    gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(mVP));
+    gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(projection * _position));
 
     // Bind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);
@@ -73,7 +74,5 @@ void Triangle::Render(glm::mat4 mVP)
 
 void Triangle::SetPosition(float x, float y, float z)
 {
-     _x = x;
-     _y = y;
-     _z = z;
+    _position = glm::translate(glm::vec3(x, y, z));
 }

@@ -14,7 +14,8 @@ class HelloPVR : public pvr::Shell
     GLuint _program;
     GLuint _vbo;
 
-    Triangle _triangle;
+    Triangle _triangle1;
+    Triangle _triangle2;
 
 public:
     // following function must be override
@@ -33,6 +34,8 @@ public:
 ***********************************************************************************************************************/
 pvr::Result HelloPVR::initApplication()
 {
+    _triangle1.SetPosition(-0.5, 0, -2);
+    _triangle2.SetPosition(0.5, 0, -2);
     return pvr::Result::Success;
 }
 
@@ -59,7 +62,7 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES Perspective Matrix");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES Translation");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
     static const char* attribs[] = {"inVertex", "inTexCoord"};
@@ -71,7 +74,7 @@ pvr::Result HelloPVR::initView()
     // Store the location of uniforms for later use
     uint32_t mvpLoc = gl::GetUniformLocation(_program, "MVPMatrix");
 
-    if (!_triangle.Init(this, mvpLoc))
+    if ((!_triangle1.Init(this, mvpLoc)) || (!_triangle2.Init(this, mvpLoc)))
     {
         throw pvr::InvalidDataError(" ERROR: Triangle failed in Init()");
         return pvr::Result::UnknownError;
@@ -114,7 +117,8 @@ pvr::Result HelloPVR::renderFrame()
 
     glm::mat4 projection = pvr::math::perspective(pvr::Api::OpenGLES2, 45, static_cast<float>(this->getWidth()) / static_cast<float>(this->getHeight()), 0.1, 100, 0);
 
-    _triangle.Render(projection);
+    _triangle1.Render(projection);
+    _triangle2.Render(projection);
 
     // Display some text
     _uiRenderer.beginRendering();
