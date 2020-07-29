@@ -33,7 +33,6 @@ public:
 ***********************************************************************************************************************/
 pvr::Result HelloPVR::initApplication()
 {
-    _triangle.SetPosition(0, 0, 2);
     return pvr::Result::Success;
 }
 
@@ -60,7 +59,7 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES Texture");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES Perspective Matrix");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
     static const char* attribs[] = {"inVertex", "inTexCoord"};
@@ -113,7 +112,9 @@ pvr::Result HelloPVR::renderFrame()
 
     gl::UseProgram(_program);
 
-    _triangle.Render(glm::mat4(1.0f));
+    glm::mat4 projection = pvr::math::perspective(pvr::Api::OpenGLES2, 45, static_cast<float>(this->getWidth()) / static_cast<float>(this->getHeight()), 0.1, 100, 0);
+
+    _triangle.Render(projection);
 
     // Display some text
     _uiRenderer.beginRendering();
