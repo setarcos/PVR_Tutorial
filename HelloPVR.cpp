@@ -1,8 +1,6 @@
 #include "PVRShell/PVRShell.h"
 #include "PVRUtils/PVRUtilsGles.h"
-
-// Index to bind the attributes to vertex shaders
-const uint32_t VertexArray = 0;
+#include "Triangle.h"
 
 /*!*********************************************************************************************************************
  To use the shell, you have to inherit a class from PVRShell
@@ -15,6 +13,8 @@ class HelloPVR : public pvr::Shell
     pvr::ui::UIRenderer _uiRenderer;
     GLuint _program;
     GLuint _vbo;
+
+    Triangle _triangle;
 
 public:
     // following function must be override
@@ -33,6 +33,7 @@ public:
 ***********************************************************************************************************************/
 pvr::Result HelloPVR::initApplication()
 {
+    _triangle.SetPosition(0, 0, 2);
     return pvr::Result::Success;
 }
 
@@ -59,7 +60,7 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES UI Renderer");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES Hello Triangle");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
     static const char* attribs[] = {"myVertex"};
@@ -68,25 +69,17 @@ pvr::Result HelloPVR::initView()
     _program = pvr::utils::createShaderProgram(*this, "VertShader.vsh",
            "FragShader.fsh", attribs, attribIndices, 1, 0, 0);
 
+    // Store the location of uniforms for later use
+    uint32_t mvpLoc = gl::GetUniformLocation(_program, "myPMVMatrix");
+
+    if (!_triangle.Init(this, mvpLoc))
+    {
+        throw pvr::InvalidDataError(" ERROR: Triangle failed in Init()");
+        return pvr::Result::UnknownError;
+    }
+
     // Sets the clear color
     gl::ClearColor(0.0f, 0.4f, 0.7f, 1.0f);
-
-    // Create VBO for the triangle from our data
-
-    // Vertex data
-    GLfloat afVertices[] = { -0.4f, -0.4f, 0.0f, 0.4f, -0.4f, 0.0f, 0.0f, 0.4f, 0.0f };
-
-    // Gen VBO
-    gl::GenBuffers(1, &_vbo);
-
-    // Bind the VBO
-    gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);
-
-    // Set the buffer's data
-    gl::BufferData(GL_ARRAY_BUFFER, 3 * (3 * sizeof(GLfloat)) /* 3 Vertices of 3 floats in size */, afVertices, GL_STATIC_DRAW);
-
-    // Unbind the VBO
-    gl::BindBuffer(GL_ARRAY_BUFFER, 0);
 
     // Enable culling
     gl::Enable(GL_CULL_FACE);
@@ -114,39 +107,13 @@ pvr::Result HelloPVR::releaseView()
 ***********************************************************************************************************************/
 pvr::Result HelloPVR::renderFrame()
 {
-    // Matrix used for projection model view
-    float afIdentity[] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-
     //  Clears the color buffer. glClear() can also be used to clear the depth or stencil buffer
     //  (GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
     gl::Clear(GL_COLOR_BUFFER_BIT);
 
-    //  Bind the projection model view matrix (PMVMatrix) to
-    //  the associated uniform variable in the shader
-    // First gets the location of that variable in the shader using its name
-    int i32Location = gl::GetUniformLocation(_program, "myPMVMatrix");
     gl::UseProgram(_program);
 
-    // Then passes the matrix to that variable
-    gl::UniformMatrix4fv(i32Location, 1, GL_FALSE, afIdentity);
-
-    // Bind the VBO
-    gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);
-
-    // Enable the custom vertex attribute at index VERTEX_ARRAY.
-    // We previously binded that index to the variable in our shader "vec4 MyVertex;"
-    gl::EnableVertexAttribArray(VertexArray);
-
-    // Points to the data for this vertex attribute
-    gl::VertexAttribPointer(VertexArray, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // Draws a non-indexed triangle array from the pointers previously given.
-    // This function allows the use of other primitive types : triangle strips, lines, ...
-    // For indexed geometry, use the function glDrawElements() with an index list.
-    gl::DrawArrays(GL_TRIANGLES, 0, 3);
-
-    // Unbind the VBO
-    gl::BindBuffer(GL_ARRAY_BUFFER, 0);
+    _triangle.Render(glm::mat4(1.0f));
 
     // Display some text
     _uiRenderer.beginRendering();
