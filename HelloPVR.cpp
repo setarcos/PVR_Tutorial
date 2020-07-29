@@ -11,6 +11,8 @@ const uint32_t VertexArray = 0;
 class HelloPVR : public pvr::Shell
 {
     pvr::EglContext _context;
+    // UIRenderer used to display text
+    pvr::ui::UIRenderer _uiRenderer;
     GLuint _program;
     GLuint _vbo;
 
@@ -54,6 +56,11 @@ pvr::Result HelloPVR::initView()
     // Initialize the PowerVR OpenGL bindings. Must be called before using any of the gl:: commands.
     _context = pvr::createEglContext();
     _context->init(getWindow(), getDisplay(), getDisplayAttributes());
+
+    // Setup the text to be rendered
+    _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES UI Renderer");
+    _uiRenderer.getDefaultTitle()->commitUpdates();
 
     static const char* attribs[] = {"myVertex"};
     static const uint16_t attribIndices[] = {0};
@@ -140,6 +147,11 @@ pvr::Result HelloPVR::renderFrame()
 
     // Unbind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Display some text
+    _uiRenderer.beginRendering();
+    _uiRenderer.getDefaultTitle()->render();
+    _uiRenderer.endRendering();
 
     _context->swapBuffers();
     return pvr::Result::Success;
