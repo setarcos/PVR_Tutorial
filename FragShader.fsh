@@ -1,5 +1,6 @@
-varying mediump vec4 fColor;
+uniform mediump sampler2D sTexture;
+varying mediump vec2 TexCoord;
 void main (void)
 {
-    gl_FragColor = fColor;
+    gl_FragColor = texture2D(sTexture, TexCoord);
 }
