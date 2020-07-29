@@ -60,14 +60,14 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES Hello Triangle");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES Triangle With Color in Buffer");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
-    static const char* attribs[] = {"myVertex"};
-    static const uint16_t attribIndices[] = {0};
+    static const char* attribs[] = {"myVertex", "myColor"};
+    static const uint16_t attribIndices[] = {0, 1};
 
     _program = pvr::utils::createShaderProgram(*this, "VertShader.vsh",
-           "FragShader.fsh", attribs, attribIndices, 1, 0, 0);
+           "FragShader.fsh", attribs, attribIndices, 2, 0, 0);
 
     // Store the location of uniforms for later use
     uint32_t mvpLoc = gl::GetUniformLocation(_program, "myPMVMatrix");
