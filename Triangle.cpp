@@ -1,7 +1,7 @@
 #include "Triangle.h"
 
 Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0),
-    _position(glm::mat4(1.0f))
+    _position(glm::mat4(1.0f)), _rotation(glm::mat4(1.0f))
 {
 }
 
@@ -51,12 +51,18 @@ bool Triangle::Init(pvr::Shell* shell, uint32_t mvpLoc)
     return true;
 }
 
+void Triangle::Update(float angle)
+{
+    // Rotate along Y Axis
+    _rotation *= glm::rotate(angle, glm::vec3(0, -1, 0));
+}
+
 void Triangle::Render(glm::mat4 projection)
 {
     unsigned int _stride = 5 * sizeof(GLfloat);
     // Pass the View Matrix to the shader.
     // Since we are not translating the triangle we do not need a Model Matrix.
-    gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(projection * _position));
+    gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(projection * _position * _rotation));
 
     // Bind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);

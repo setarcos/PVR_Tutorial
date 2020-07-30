@@ -62,7 +62,7 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES Translation");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES Rotation");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
     static const char* attribs[] = {"inVertex", "inTexCoord"};
@@ -84,7 +84,7 @@ pvr::Result HelloPVR::initView()
     gl::ClearColor(0.0f, 0.4f, 0.7f, 1.0f);
 
     // Enable culling
-    gl::Enable(GL_CULL_FACE);
+    // gl::Enable(GL_CULL_FACE);
     return pvr::Result::Success;
 }
 
@@ -116,6 +116,9 @@ pvr::Result HelloPVR::renderFrame()
     gl::UseProgram(_program);
 
     glm::mat4 projection = pvr::math::perspective(pvr::Api::OpenGLES2, 45, static_cast<float>(this->getWidth()) / static_cast<float>(this->getHeight()), 0.1, 100, 0);
+
+    _triangle1.Update(0.01f);
+    _triangle2.Update(-0.02f);
 
     _triangle1.Render(projection);
     _triangle2.Render(projection);
