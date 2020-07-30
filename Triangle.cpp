@@ -1,7 +1,7 @@
 #include "Triangle.h"
 
-Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0), _mvit(0), _nVertex(0),
-    _position(glm::mat4(1.0f)), _rotation(glm::mat4(1.0f))
+Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0), _mv(0), _mvit(0),
+    _nVertex(0), _position(glm::mat4(1.0f)), _rotation(glm::mat4(1.0f))
 {
 }
 
@@ -62,7 +62,8 @@ bool Triangle::Init(pvr::Shell* shell, uint32_t* mvpLoc)
 
     // Save the MVP matrix location for later use
     _mvp = mvpLoc[0];
-    _mvit = mvpLoc[1];
+    _mv = mvpLoc[1];
+    _mvit = mvpLoc[2];
 
     _nVertex = 6;
 
@@ -81,8 +82,11 @@ void Triangle::Render(glm::mat4 view, glm::mat4 projection)
 
     glm::mat4 model = _position * _rotation;
 
-    gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(projection * view * model));
-    glm::mat3 modelViewIT = glm::inverseTranspose(view * model);
+    glm::mat4 modelViewProj = projection * view * model;
+    gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(modelViewProj));
+    glm::mat4 modelView = view * model;
+    gl::UniformMatrix4fv(_mv, 1, GL_FALSE, glm::value_ptr(modelView));
+    glm::mat3 modelViewIT = glm::inverseTranspose(modelView);
     gl::UniformMatrix3fv(_mvit, 1, GL_FALSE, glm::value_ptr(modelViewIT));
 
     // Bind the VBO
@@ -168,7 +172,8 @@ bool Cube::Init(pvr::Shell *shell, uint32_t* mvpLoc)
     gl::BindBuffer(GL_ARRAY_BUFFER, 0);
     // Save the MVP matrix location for later use
     _mvp = mvpLoc[0];
-    _mvit = mvpLoc[1];
+    _mv = mvpLoc[1];
+    _mvit = mvpLoc[2];
 
     _nVertex = 36;
     return true;

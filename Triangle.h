@@ -13,6 +13,7 @@ protected:
 
     // MVP Matrix location
     uint32_t _mvp;
+    uint32_t _mv;
     uint32_t _mvit;
 
     uint32_t _nVertex;

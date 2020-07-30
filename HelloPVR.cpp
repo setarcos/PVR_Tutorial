@@ -4,12 +4,14 @@
 
 enum EUniform {
     eMVPMatrix,
+    eMVMatrix,
     eMVITMatrix,
-    eLightDirection,
+    eLightPosition,
+    eLightColor,
     eNumUniforms
 };
 const char* sUniformNames[] = {
-    "MVPMatrix", "MVITMatrix", "LightDirection"
+    "MVPMatrix", "MVMatrix", "MVITMatrix", "LightPosition", "LightColor"
 };
 
 GLuint uniLoc[eNumUniforms];
@@ -148,15 +150,17 @@ pvr::Result HelloPVR::renderFrame()
     if (pvr::Shell::isKeyPressed(pvr::Keys::Down))
         _camRho -= 0.1f;
 
-    _camPosition = glm::vec3(_camRho * cos(_camTheta), 1, _camRho * sin(_camTheta));
-    glm::vec3 lightDirection = glm::vec3(0.0f, -0.5f, -1.0f);
+    _camPosition = glm::vec3(_camRho * cos(_camTheta), 0, _camRho * sin(_camTheta));
+    glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
+    glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     glm::mat4 view = glm::lookAt(_camPosition, glm::vec3(0,0,0), glm::vec3(0, 1, 0));
-    glm::vec3 viewLightDirection = glm::normalize(glm::vec3((view * glm::vec4(lightDirection, 0))));
-    gl::Uniform3fv(uniLoc[eLightDirection], 1, glm::value_ptr(viewLightDirection));
+    glm::vec3 viewLightPositon = glm::vec3((view * glm::vec4(lightPosition, 1)));
+    gl::Uniform3fv(uniLoc[eLightPosition], 1, glm::value_ptr(viewLightPositon));
+    gl::Uniform4fv(uniLoc[eLightColor], 1, glm::value_ptr(lightColor));
 
     _triangle.Update(0.01f);
-    _cube.Update(-0.02f);
+    _cube.Update(-0.005f);
 
     _triangle.Render(view, _projection);
     _cube.Render(view, _projection);
