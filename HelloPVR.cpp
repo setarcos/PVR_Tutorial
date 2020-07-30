@@ -18,8 +18,9 @@ class HelloPVR : public pvr::Shell
     Triangle _triangle2;
 
     glm::vec3 _camPosition;
-    float _camRotation;
     glm::mat4 _projection;
+    float _camTheta;
+    float _camRho;
 
 public:
     // following function must be override
@@ -66,7 +67,7 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES View Matrix");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES glm::lookAt");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
     static const char* attribs[] = {"inVertex", "inTexCoord"};
@@ -84,8 +85,8 @@ pvr::Result HelloPVR::initView()
         return pvr::Result::UnknownError;
     }
 
-    _camPosition = glm::vec3(0, 0, 2);
-    _camRotation = 0;
+    _camTheta = glm::radians(90.0f);
+    _camRho = 2.0f;
     _projection = pvr::math::perspective(pvr::Api::OpenGLES2, 45, static_cast<float>(this->getWidth()) / static_cast<float>(this->getHeight()), 0.1, 100, 0);
 
     // Sets the clear color
@@ -123,10 +124,18 @@ pvr::Result HelloPVR::renderFrame()
 
     gl::UseProgram(_program);
 
-    /* Creates the View matrix based on the camera's position and orientation.
-    Notice that we actual move and rotate the world by the opposite amounts so that the
-    camera can actual stay at the origin whilst the world transforms */
-    glm::mat4 view = glm::rotate(-_camRotation, glm::vec3(0, -1, 0)) * glm::translate(-_camPosition);
+    if (pvr::Shell::isKeyPressed(pvr::Keys::Left))
+        _camTheta += 0.01f;
+    if (pvr::Shell::isKeyPressed(pvr::Keys::Right))
+        _camTheta -= 0.01f;
+    if (pvr::Shell::isKeyPressed(pvr::Keys::Up))
+        _camRho += 0.1f;
+    if (pvr::Shell::isKeyPressed(pvr::Keys::Down))
+        _camRho -= 0.1f;
+
+    _camPosition = glm::vec3(_camRho * cos(_camTheta), 0, _camRho * sin(_camTheta));
+
+    glm::mat4 view = glm::lookAt(_camPosition, glm::vec3(0,0,0), glm::vec3(0, 1, 0));
 
     _triangle1.Update(0.01f);
     _triangle2.Update(-0.02f);
