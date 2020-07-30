@@ -15,6 +15,8 @@ protected:
     uint32_t _mvp;
     uint32_t _mvit;
 
+    uint32_t _nVertex;
+
     // Matrix for the Model position
     glm::mat4 _position;
 
@@ -35,5 +37,4 @@ class Cube : public Triangle
 {
 public:
     bool Init(pvr::Shell *shell, uint32_t* mvpLoc);
-    void Render(glm::mat4 view, glm::mat4 projection);
 };

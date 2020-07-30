@@ -1,6 +1,6 @@
 #include "Triangle.h"
 
-Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0), _mvit(0),
+Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0), _mvit(0), _nVertex(0),
     _position(glm::mat4(1.0f)), _rotation(glm::mat4(1.0f))
 {
 }
@@ -64,6 +64,8 @@ bool Triangle::Init(pvr::Shell* shell, uint32_t* mvpLoc)
     _mvp = mvpLoc[0];
     _mvit = mvpLoc[1];
 
+    _nVertex = 6;
+
     return true;
 }
 
@@ -93,7 +95,7 @@ void Triangle::Render(glm::mat4 view, glm::mat4 projection)
     gl::VertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, _stride, (void *)(3 * sizeof(GLfloat)));
     gl::EnableVertexAttribArray(2);
     gl::VertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, _stride, (void *)(6 * sizeof(GLfloat)));
-    gl::DrawArrays(GL_TRIANGLES, 0, 6);
+    gl::DrawArrays(GL_TRIANGLES, 0, _nVertex);
 
     // Unbind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, 0);
@@ -168,32 +170,6 @@ bool Cube::Init(pvr::Shell *shell, uint32_t* mvpLoc)
     _mvp = mvpLoc[0];
     _mvit = mvpLoc[1];
 
+    _nVertex = 36;
     return true;
-}
-
-void Cube::Render(glm::mat4 view, glm::mat4 projection)
-{
-    unsigned int _stride = 9 * sizeof(GLfloat);
-
-    glm::mat4 model = _position * _rotation;
-
-    gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(projection * view * model));
-
-    glm::mat3 modelViewIT = glm::inverseTranspose(view * model);
-    gl::UniformMatrix3fv(_mvit, 1, GL_FALSE, glm::value_ptr(modelViewIT));
-
-    // Bind the VBO
-    gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);
-
-    gl::EnableVertexAttribArray(0);
-    // Points to the position data
-    gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _stride, 0);
-    gl::EnableVertexAttribArray(1);
-    gl::VertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, _stride, (void *)(3 * sizeof(GLfloat)));
-    gl::EnableVertexAttribArray(2);
-    gl::VertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, _stride, (void *)(6 * sizeof(GLfloat)));
-    gl::DrawArrays(GL_TRIANGLES, 0, 3 * 12);
-
-    // Unbind the VBO
-    gl::BindBuffer(GL_ARRAY_BUFFER, 0);
 }
