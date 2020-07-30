@@ -13,6 +13,7 @@ protected:
 
     // MVP Matrix location
     uint32_t _mvp;
+    uint32_t _mvit;
 
     // Matrix for the Model position
     glm::mat4 _position;
@@ -25,7 +26,7 @@ public:
     ~Triangle(void);
 
     void Update(float angle);
-    bool Init(pvr::Shell *shell, uint32_t mvpLoc);
+    bool Init(pvr::Shell *shell, uint32_t* mvpLoc);
     void Render(glm::mat4 view, glm::mat4 projection);
     void SetPosition(float x, float y, float z);
 };
@@ -33,6 +34,6 @@ public:
 class Cube : public Triangle
 {
 public:
-    bool Init(pvr::Shell *shell, uint32_t mvpLoc);
+    bool Init(pvr::Shell *shell, uint32_t* mvpLoc);
     void Render(glm::mat4 view, glm::mat4 projection);
 };

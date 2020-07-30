@@ -1,6 +1,6 @@
 #include "Triangle.h"
 
-Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0),
+Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0), _mvit(0),
     _position(glm::mat4(1.0f)), _rotation(glm::mat4(1.0f))
 {
 }
@@ -13,17 +13,32 @@ Triangle::~Triangle(void)
     if(_texture) gl::DeleteTextures(1, &_texture);
 }
 
-bool Triangle::Init(pvr::Shell* shell, uint32_t mvpLoc)
+bool Triangle::Init(pvr::Shell* shell, uint32_t* mvpLoc)
 {
     GLfloat afVertices[] = { // Vertex 1
                             -0.4f, -0.4f, -0.0f,    // Position 1
                              2.0f, 0.0f, 0.0f,      // Texture coodinate 1
+                             0.0f, 0.0f, 1.0f,      // Normal 1
                              // Vertex 2
                              0.4f, -0.4f, -0.0f,    // Position 2
                              2.0f, 1.0f, 0.0f,      // Texture coodinate 2
+                             0.0f, 0.0f, 1.0f,      // Normal 2
                              // Vertex 3
                              0.0f,  0.4f, -0.0f,    // Position 3
                              2.0f, 0.5f, 1.0f,      // Texture coodinate 3
+                             0.0f, 0.0f, 1.0f,      // Normal 3
+                             //Vertex 1
+                            -0.4f, -0.4f, -0.0f,    // Position 1
+                             0.5f, 0.0f, 1.0f,      // Color 1
+                             0.0f, 0.0f, -1.0f,      // Normal 1
+                             // Vertex 3
+                             0.0f,  0.4f, -0.0f,    // Position 3
+                             0.5f, 0.0f, 1.0f,      // Color 3
+                             0.0f, 0.0f, -1.0f,      // Normal 3
+                             // Vertex 2
+                             0.4f, -0.4f, -0.0f,    // Position 2
+                             0.5f, 0.0f, 1.0f,      // Color 2
+                             0.0f, 0.0f, -1.0f,      // Normal 2
                              };
 
     // Create VBO for the triangle from our data
@@ -34,7 +49,7 @@ bool Triangle::Init(pvr::Shell* shell, uint32_t mvpLoc)
     gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);
 
     // Set the buffer's data
-    gl::BufferData(GL_ARRAY_BUFFER, 3 * 6 * sizeof(GLfloat), afVertices, GL_STATIC_DRAW);
+    gl::BufferData(GL_ARRAY_BUFFER, 6 * 9 * sizeof(GLfloat), afVertices, GL_STATIC_DRAW);
 
     // Unbind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, 0);
@@ -46,7 +61,8 @@ bool Triangle::Init(pvr::Shell* shell, uint32_t mvpLoc)
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Save the MVP matrix location for later use
-    _mvp = mvpLoc;
+    _mvp = mvpLoc[0];
+    _mvit = mvpLoc[1];
 
     return true;
 }
@@ -59,11 +75,13 @@ void Triangle::Update(float angle)
 
 void Triangle::Render(glm::mat4 view, glm::mat4 projection)
 {
-    unsigned int _stride = 6 * sizeof(GLfloat);
+    unsigned int _stride = 9 * sizeof(GLfloat);
 
     glm::mat4 model = _position * _rotation;
 
     gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(projection * view * model));
+    glm::mat3 modelViewIT = glm::inverseTranspose(view * model);
+    gl::UniformMatrix3fv(_mvit, 1, GL_FALSE, glm::value_ptr(modelViewIT));
 
     // Bind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);
@@ -73,7 +91,9 @@ void Triangle::Render(glm::mat4 view, glm::mat4 projection)
     gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _stride, 0);
     gl::EnableVertexAttribArray(1);
     gl::VertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, _stride, (void *)(3 * sizeof(GLfloat)));
-    gl::DrawArrays(GL_TRIANGLES, 0, 3);
+    gl::EnableVertexAttribArray(2);
+    gl::VertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, _stride, (void *)(6 * sizeof(GLfloat)));
+    gl::DrawArrays(GL_TRIANGLES, 0, 6);
 
     // Unbind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, 0);
@@ -84,7 +104,7 @@ void Triangle::SetPosition(float x, float y, float z)
     _position = glm::translate(glm::vec3(x, y, z));
 }
 
-bool Cube::Init(pvr::Shell *shell, uint32_t mvpLoc)
+bool Cube::Init(pvr::Shell *shell, uint32_t* mvpLoc)
 {
     static char vertices[] = {
         -1,-1,-1, -1,-1, 1, -1, 1, 1,
@@ -106,7 +126,7 @@ bool Cube::Init(pvr::Shell *shell, uint32_t mvpLoc)
          1,-1, 1, -1,-1, 1, -1,-1,-1, // Bottom
     };
 
-    GLfloat vbodata[12 * 3 * 6];
+    GLfloat vbodata[12 * 3 * 9];
     static const GLfloat facecolor[] =
     {
         0.0f, 1.0f, 0.0f, // Green
@@ -116,15 +136,27 @@ bool Cube::Init(pvr::Shell *shell, uint32_t mvpLoc)
         1.0f, 1.0f, 1.0f, // White
         1.0f, 1.0f, 0.0f, // Yellow
     };
+    static const GLfloat facenormal[] =
+    {
+        -1.0f, 0.0f, 0.0f,
+         1.0f, 0.0f, 0.0f,
+         0.0f, 0.0f, -1.0f,
+         0.0f, 0.0f, 1.0f,
+         0.0f, 1.0f, 0.0f,
+         0.0f, -1.0f, 0.0f,
+    };
     static const float CS = 0.29f; // Cube size
 
     for (int i = 0; i < 6; ++i) {
         for (int j = 0; j < 6; ++j) {
-            vbodata[i * 36 + j * 6] = vertices[i * 18 + j * 3] * CS;
-            vbodata[i * 36 + j * 6 + 1] = vertices[i * 18 + j * 3 + 1] * CS;
-            vbodata[i * 36 + j * 6 + 2] = vertices[i * 18 + j * 3 + 2] * CS;
-            for (int k = 0; k < 3; ++ k)
-                vbodata[i * 36 + j * 6 + 3 + k] = facecolor[i * 3 + k];
+            vbodata[i * 54 + j * 9] = vertices[i * 18 + j * 3] * CS;
+            vbodata[i * 54 + j * 9 + 1] = vertices[i * 18 + j * 3 + 1] * CS;
+            vbodata[i * 54 + j * 9 + 2] = vertices[i * 18 + j * 3 + 2] * CS;
+            for (int k = 0; k < 3; ++ k) {
+                // same color and normal for vertexes on same face
+                vbodata[i * 54 + j * 9 + 3 + k] = facecolor[i * 3 + k];
+                vbodata[i * 54 + j * 9 + 6 + k] = facenormal[i * 3 + k];
+            }
         }
     }
     gl::GenBuffers(1, &_vbo);
@@ -133,18 +165,22 @@ bool Cube::Init(pvr::Shell *shell, uint32_t mvpLoc)
     // Unbind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, 0);
     // Save the MVP matrix location for later use
-    _mvp = mvpLoc;
+    _mvp = mvpLoc[0];
+    _mvit = mvpLoc[1];
 
     return true;
 }
 
 void Cube::Render(glm::mat4 view, glm::mat4 projection)
 {
-    unsigned int _stride = 6 * sizeof(GLfloat);
+    unsigned int _stride = 9 * sizeof(GLfloat);
 
     glm::mat4 model = _position * _rotation;
 
     gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(projection * view * model));
+
+    glm::mat3 modelViewIT = glm::inverseTranspose(view * model);
+    gl::UniformMatrix3fv(_mvit, 1, GL_FALSE, glm::value_ptr(modelViewIT));
 
     // Bind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);
@@ -154,6 +190,8 @@ void Cube::Render(glm::mat4 view, glm::mat4 projection)
     gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _stride, 0);
     gl::EnableVertexAttribArray(1);
     gl::VertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, _stride, (void *)(3 * sizeof(GLfloat)));
+    gl::EnableVertexAttribArray(2);
+    gl::VertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, _stride, (void *)(6 * sizeof(GLfloat)));
     gl::DrawArrays(GL_TRIANGLES, 0, 3 * 12);
 
     // Unbind the VBO

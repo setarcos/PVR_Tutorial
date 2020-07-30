@@ -2,6 +2,18 @@
 #include "PVRUtils/PVRUtilsGles.h"
 #include "Triangle.h"
 
+enum EUniform {
+    eMVPMatrix,
+    eMVITMatrix,
+    eLightDirection,
+    eNumUniforms
+};
+const char* sUniformNames[] = {
+    "MVPMatrix", "MVITMatrix", "LightDirection"
+};
+
+GLuint uniLoc[eNumUniforms];
+
 /*!*********************************************************************************************************************
  To use the shell, you have to inherit a class from PVRShell
  and implement the five virtual functions which describe how your application initializes, runs and releases the resources.
@@ -67,19 +79,20 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES Draw Cube");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES Simple Lighting");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
-    static const char* attribs[] = {"inVertex", "inTexColor"};
-    static const uint16_t attribIndices[] = {0, 1};
+    static const char* attribs[] = {"inVertex", "inTexColor", "inNormal"};
+    static const uint16_t attribIndices[] = {0, 1, 2};
 
     _program = pvr::utils::createShaderProgram(*this, "VertShader.vsh",
-           "FragShader.fsh", attribs, attribIndices, 2, 0, 0);
+           "FragShader.fsh", attribs, attribIndices, 3, 0, 0);
 
     // Store the location of uniforms for later use
-    uint32_t mvpLoc = gl::GetUniformLocation(_program, "MVPMatrix");
+    for (int i = 0; i < eNumUniforms; ++i)
+        uniLoc[i] = gl::GetUniformLocation(_program, sUniformNames[i]);
 
-    if ((!_triangle.Init(this, mvpLoc)) || (!_cube.Init(this, mvpLoc)))
+    if ((!_triangle.Init(this, uniLoc)) || (!_cube.Init(this, uniLoc)))
     {
         throw pvr::InvalidDataError(" ERROR: Triangle failed in Init()");
         return pvr::Result::UnknownError;
@@ -134,8 +147,11 @@ pvr::Result HelloPVR::renderFrame()
         _camRho -= 0.1f;
 
     _camPosition = glm::vec3(_camRho * cos(_camTheta), 1, _camRho * sin(_camTheta));
+    glm::vec3 lightDirection = glm::vec3(0.0f, -0.5f, -1.0f);
 
     glm::mat4 view = glm::lookAt(_camPosition, glm::vec3(0,0,0), glm::vec3(0, 1, 0));
+    glm::vec3 viewLightDirection = glm::normalize(glm::vec3((view * glm::vec4(lightDirection, 0))));
+    gl::Uniform3fv(uniLoc[eLightDirection], 1, glm::value_ptr(viewLightDirection));
 
     _triangle.Update(0.01f);
     _cube.Update(-0.02f);
