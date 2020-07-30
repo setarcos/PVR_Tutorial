@@ -4,7 +4,7 @@
 
 class Triangle
 {
-private:
+protected:
     // VBO handle
     uint32_t _vbo;
 
@@ -30,3 +30,9 @@ public:
     void SetPosition(float x, float y, float z);
 };
 
+class Cube : public Triangle
+{
+public:
+    bool Init(pvr::Shell *shell, uint32_t mvpLoc);
+    void Render(glm::mat4 view, glm::mat4 projection);
+};

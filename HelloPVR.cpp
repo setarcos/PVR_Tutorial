@@ -14,8 +14,8 @@ class HelloPVR : public pvr::Shell
     GLuint _program;
     GLuint _vbo;
 
-    Triangle _triangle1;
-    Triangle _triangle2;
+    Triangle _triangle;
+    Cube _cube;
 
     glm::vec3 _camPosition;
     glm::mat4 _projection;
@@ -39,8 +39,8 @@ public:
 ***********************************************************************************************************************/
 pvr::Result HelloPVR::initApplication()
 {
-    _triangle1.SetPosition(-0.5, 0, 0);
-    _triangle2.SetPosition(0.5, 0, 0);
+    _triangle.SetPosition(-0.5, 0, 0);
+    _cube.SetPosition(0.5, 0, 0);
     return pvr::Result::Success;
 }
 
@@ -67,10 +67,10 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES glm::lookAt");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES Draw Cube");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
-    static const char* attribs[] = {"inVertex", "inTexCoord"};
+    static const char* attribs[] = {"inVertex", "inTexColor"};
     static const uint16_t attribIndices[] = {0, 1};
 
     _program = pvr::utils::createShaderProgram(*this, "VertShader.vsh",
@@ -79,7 +79,7 @@ pvr::Result HelloPVR::initView()
     // Store the location of uniforms for later use
     uint32_t mvpLoc = gl::GetUniformLocation(_program, "MVPMatrix");
 
-    if ((!_triangle1.Init(this, mvpLoc)) || (!_triangle2.Init(this, mvpLoc)))
+    if ((!_triangle.Init(this, mvpLoc)) || (!_cube.Init(this, mvpLoc)))
     {
         throw pvr::InvalidDataError(" ERROR: Triangle failed in Init()");
         return pvr::Result::UnknownError;
@@ -93,7 +93,7 @@ pvr::Result HelloPVR::initView()
     gl::ClearColor(0.0f, 0.4f, 0.7f, 1.0f);
 
     // Enable culling
-    // gl::Enable(GL_CULL_FACE);
+    gl::Enable(GL_CULL_FACE);
     return pvr::Result::Success;
 }
 
@@ -133,15 +133,15 @@ pvr::Result HelloPVR::renderFrame()
     if (pvr::Shell::isKeyPressed(pvr::Keys::Down))
         _camRho -= 0.1f;
 
-    _camPosition = glm::vec3(_camRho * cos(_camTheta), 0, _camRho * sin(_camTheta));
+    _camPosition = glm::vec3(_camRho * cos(_camTheta), 1, _camRho * sin(_camTheta));
 
     glm::mat4 view = glm::lookAt(_camPosition, glm::vec3(0,0,0), glm::vec3(0, 1, 0));
 
-    _triangle1.Update(0.01f);
-    _triangle2.Update(-0.02f);
+    _triangle.Update(0.01f);
+    _cube.Update(-0.02f);
 
-    _triangle1.Render(view, _projection);
-    _triangle2.Render(view, _projection);
+    _triangle.Render(view, _projection);
+    _cube.Render(view, _projection);
 
     // Display some text
     _uiRenderer.beginRendering();

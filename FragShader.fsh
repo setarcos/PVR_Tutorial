@@ -1,6 +1,9 @@
 uniform mediump sampler2D sTexture;
-varying mediump vec2 TexCoord;
+varying mediump vec3 texture_or_color;
 void main (void)
 {
-    gl_FragColor = texture2D(sTexture, TexCoord);
+    if (texture_or_color.r > 1.0)
+        gl_FragColor = texture2D(sTexture, vec2(texture_or_color.g, texture_or_color.b));
+    else
+        gl_FragColor = vec4(texture_or_color, 1.0);
 }

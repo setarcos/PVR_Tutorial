@@ -17,13 +17,13 @@ bool Triangle::Init(pvr::Shell* shell, uint32_t mvpLoc)
 {
     GLfloat afVertices[] = { // Vertex 1
                             -0.4f, -0.4f, -0.0f,    // Position 1
-                             0.0f, 0.0f,                    // Texture coodinate 1
+                             2.0f, 0.0f, 0.0f,      // Texture coodinate 1
                              // Vertex 2
                              0.4f, -0.4f, -0.0f,    // Position 2
-                             1.0f, 0.0f,                    // Texture coodinate 2
+                             2.0f, 1.0f, 0.0f,      // Texture coodinate 2
                              // Vertex 3
                              0.0f,  0.4f, -0.0f,    // Position 3
-                             0.5f, 1.0f,                    // Texture coodinate 3
+                             2.0f, 0.5f, 1.0f,      // Texture coodinate 3
                              };
 
     // Create VBO for the triangle from our data
@@ -59,9 +59,7 @@ void Triangle::Update(float angle)
 
 void Triangle::Render(glm::mat4 view, glm::mat4 projection)
 {
-    unsigned int _stride = 5 * sizeof(GLfloat);
-    // Pass the View Matrix to the shader.
-    // Since we are not translating the triangle we do not need a Model Matrix.
+    unsigned int _stride = 6 * sizeof(GLfloat);
 
     glm::mat4 model = _position * _rotation;
 
@@ -74,7 +72,7 @@ void Triangle::Render(glm::mat4 view, glm::mat4 projection)
     // Points to the position data
     gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _stride, 0);
     gl::EnableVertexAttribArray(1);
-    gl::VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, _stride, (void *)(3 * sizeof(GLfloat)));
+    gl::VertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, _stride, (void *)(3 * sizeof(GLfloat)));
     gl::DrawArrays(GL_TRIANGLES, 0, 3);
 
     // Unbind the VBO
@@ -84,4 +82,80 @@ void Triangle::Render(glm::mat4 view, glm::mat4 projection)
 void Triangle::SetPosition(float x, float y, float z)
 {
     _position = glm::translate(glm::vec3(x, y, z));
+}
+
+bool Cube::Init(pvr::Shell *shell, uint32_t mvpLoc)
+{
+    static char vertices[] = {
+        -1,-1,-1, -1,-1, 1, -1, 1, 1,
+        -1,-1,-1, -1, 1, 1, -1, 1,-1, // Left
+
+         1, 1, 1, 1,-1,-1, 1, 1,-1,
+         1,-1,-1, 1, 1, 1, 1,-1, 1, // Right
+
+         1, 1,-1, -1,-1,-1, -1, 1,-1,
+         1, 1,-1, 1,-1,-1, -1,-1,-1, // Back
+
+        -1, 1, 1, -1,-1, 1, 1,-1, 1,
+         1, 1, 1, -1, 1, 1, 1,-1, 1, // Front
+
+         1, 1, 1, 1, 1,-1, -1, 1,-1,
+         1, 1, 1, -1, 1,-1, -1, 1, 1, // Top
+
+         1,-1, 1, -1,-1,-1, 1,-1,-1,
+         1,-1, 1, -1,-1, 1, -1,-1,-1, // Bottom
+    };
+
+    GLfloat vbodata[12 * 3 * 6];
+    static const GLfloat facecolor[] =
+    {
+        0.0f, 1.0f, 0.0f, // Green
+        0.0f, 0.0f, 1.0f, // Blue
+        1.0f, 0.5f, 0.0f, // Oriange
+        1.0f, 0.0f, 0.0f, // Red
+        1.0f, 1.0f, 1.0f, // White
+        1.0f, 1.0f, 0.0f, // Yellow
+    };
+    static const float CS = 0.29f; // Cube size
+
+    for (int i = 0; i < 6; ++i) {
+        for (int j = 0; j < 6; ++j) {
+            vbodata[i * 36 + j * 6] = vertices[i * 18 + j * 3] * CS;
+            vbodata[i * 36 + j * 6 + 1] = vertices[i * 18 + j * 3 + 1] * CS;
+            vbodata[i * 36 + j * 6 + 2] = vertices[i * 18 + j * 3 + 2] * CS;
+            for (int k = 0; k < 3; ++ k)
+                vbodata[i * 36 + j * 6 + 3 + k] = facecolor[i * 3 + k];
+        }
+    }
+    gl::GenBuffers(1, &_vbo);
+    gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);
+    gl::BufferData(GL_ARRAY_BUFFER, sizeof(vbodata), vbodata, GL_STATIC_DRAW);
+    // Unbind the VBO
+    gl::BindBuffer(GL_ARRAY_BUFFER, 0);
+    // Save the MVP matrix location for later use
+    _mvp = mvpLoc;
+
+    return true;
+}
+
+void Cube::Render(glm::mat4 view, glm::mat4 projection)
+{
+    unsigned int _stride = 6 * sizeof(GLfloat);
+
+    glm::mat4 model = _position * _rotation;
+
+    gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(projection * view * model));
+
+    // Bind the VBO
+    gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);
+
+    gl::EnableVertexAttribArray(0);
+    // Points to the position data
+    gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _stride, 0);
+    gl::EnableVertexAttribArray(1);
+    gl::VertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, _stride, (void *)(3 * sizeof(GLfloat)));
+    gl::DrawArrays(GL_TRIANGLES, 0, 3 * 12);
+
+    // Unbind the VBO
+    gl::BindBuffer(GL_ARRAY_BUFFER, 0);
 }
