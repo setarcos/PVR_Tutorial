@@ -26,7 +26,7 @@ public:
 
     void Update(float angle);
     bool Init(pvr::Shell *shell, uint32_t mvpLoc);
-    void Render(glm::mat4 projection);
+    void Render(glm::mat4 view, glm::mat4 projection);
     void SetPosition(float x, float y, float z);
 };
 

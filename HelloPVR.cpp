@@ -17,6 +17,10 @@ class HelloPVR : public pvr::Shell
     Triangle _triangle1;
     Triangle _triangle2;
 
+    glm::vec3 _camPosition;
+    float _camRotation;
+    glm::mat4 _projection;
+
 public:
     // following function must be override
     virtual pvr::Result initApplication();
@@ -34,8 +38,8 @@ public:
 ***********************************************************************************************************************/
 pvr::Result HelloPVR::initApplication()
 {
-    _triangle1.SetPosition(-0.5, 0, -2);
-    _triangle2.SetPosition(0.5, 0, -2);
+    _triangle1.SetPosition(-0.5, 0, 0);
+    _triangle2.SetPosition(0.5, 0, 0);
     return pvr::Result::Success;
 }
 
@@ -62,7 +66,7 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES Rotation");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES View Matrix");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
     static const char* attribs[] = {"inVertex", "inTexCoord"};
@@ -79,6 +83,10 @@ pvr::Result HelloPVR::initView()
         throw pvr::InvalidDataError(" ERROR: Triangle failed in Init()");
         return pvr::Result::UnknownError;
     }
+
+    _camPosition = glm::vec3(0, 0, 2);
+    _camRotation = 0;
+    _projection = pvr::math::perspective(pvr::Api::OpenGLES2, 45, static_cast<float>(this->getWidth()) / static_cast<float>(this->getHeight()), 0.1, 100, 0);
 
     // Sets the clear color
     gl::ClearColor(0.0f, 0.4f, 0.7f, 1.0f);
@@ -115,13 +123,16 @@ pvr::Result HelloPVR::renderFrame()
 
     gl::UseProgram(_program);
 
-    glm::mat4 projection = pvr::math::perspective(pvr::Api::OpenGLES2, 45, static_cast<float>(this->getWidth()) / static_cast<float>(this->getHeight()), 0.1, 100, 0);
+    /* Creates the View matrix based on the camera's position and orientation.
+    Notice that we actual move and rotate the world by the opposite amounts so that the
+    camera can actual stay at the origin whilst the world transforms */
+    glm::mat4 view = glm::rotate(-_camRotation, glm::vec3(0, -1, 0)) * glm::translate(-_camPosition);
 
     _triangle1.Update(0.01f);
     _triangle2.Update(-0.02f);
 
-    _triangle1.Render(projection);
-    _triangle2.Render(projection);
+    _triangle1.Render(view, _projection);
+    _triangle2.Render(view, _projection);
 
     // Display some text
     _uiRenderer.beginRendering();
