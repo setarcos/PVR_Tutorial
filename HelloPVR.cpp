@@ -107,6 +107,8 @@ pvr::Result HelloPVR::initView()
 
     // Enable culling
     gl::Enable(GL_CULL_FACE);
+    // Enable depth test
+    gl::Enable(GL_DEPTH_TEST);
     return pvr::Result::Success;
 }
 
@@ -133,7 +135,7 @@ pvr::Result HelloPVR::renderFrame()
 {
     //  Clears the color buffer. glClear() can also be used to clear the depth or stencil buffer
     //  (GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
-    gl::Clear(GL_COLOR_BUFFER_BIT);
+    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     gl::UseProgram(_program);
 
