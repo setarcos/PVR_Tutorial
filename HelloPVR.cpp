@@ -1,17 +1,11 @@
 #include "PVRShell/PVRShell.h"
 #include "PVRUtils/PVRUtilsGles.h"
 #include "Triangle.h"
+#include "HelloPVR.h"
 
-enum EUniform {
-    eMVPMatrix,
-    eMVMatrix,
-    eMVITMatrix,
-    eLightPosition,
-    eLightColor,
-    eNumUniforms
-};
 const char* sUniformNames[] = {
-    "MVPMatrix", "MVMatrix", "MVITMatrix", "LightPosition", "LightColor"
+    "MVPMatrix", "MVMatrix", "MVITMatrix", "MMatrix", "LightPosition",
+    "LightColor", "sTexture", "sCubeMap"
 };
 
 GLuint uniLoc[eNumUniforms];
@@ -30,6 +24,7 @@ class HelloPVR : public pvr::Shell
 
     Triangle _triangle;
     Cube _cube;
+    CubeMap _map;
 
     glm::vec3 _camPosition;
     glm::mat4 _projection;
@@ -55,6 +50,7 @@ pvr::Result HelloPVR::initApplication()
 {
     _triangle.SetPosition(-0.5, 0, 0);
     _cube.SetPosition(0.5, 0, 0);
+    _map.SetPosition(0, 0, 0);
     return pvr::Result::Success;
 }
 
@@ -81,7 +77,7 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES Simple Lighting");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES CubeMap Texture");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
     static const char* attribs[] = {"inVertex", "inTexColor", "inNormal"};
@@ -94,7 +90,8 @@ pvr::Result HelloPVR::initView()
     for (int i = 0; i < eNumUniforms; ++i)
         uniLoc[i] = gl::GetUniformLocation(_program, sUniformNames[i]);
 
-    if ((!_triangle.Init(this, uniLoc)) || (!_cube.Init(this, uniLoc)))
+    if ((!_triangle.Init(this, uniLoc)) || (!_cube.Init(this, uniLoc))
+            || (!_map.Init(this, uniLoc)))
     {
         throw pvr::InvalidDataError(" ERROR: Triangle failed in Init()");
         return pvr::Result::UnknownError;
@@ -146,9 +143,9 @@ pvr::Result HelloPVR::renderFrame()
     if (pvr::Shell::isKeyPressed(pvr::Keys::Right))
         _camTheta -= 0.01f;
     if (pvr::Shell::isKeyPressed(pvr::Keys::Up))
-        _camRho += 0.1f;
+        if (_camRho < 8) _camRho += 0.1f;
     if (pvr::Shell::isKeyPressed(pvr::Keys::Down))
-        _camRho -= 0.1f;
+        if (_camRho > 1) _camRho -= 0.1f;
 
     _camPosition = glm::vec3(_camRho * cos(_camTheta), 0, _camRho * sin(_camTheta));
     glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -159,11 +156,13 @@ pvr::Result HelloPVR::renderFrame()
     gl::Uniform3fv(uniLoc[eLightPosition], 1, glm::value_ptr(viewLightPositon));
     gl::Uniform4fv(uniLoc[eLightColor], 1, glm::value_ptr(lightColor));
 
+    _map.SetPosition(_camPosition.x, _camPosition.y, _camPosition.z);
     _triangle.Update(0.01f);
     _cube.Update(-0.005f);
 
     _triangle.Render(view, _projection);
     _cube.Render(view, _projection);
+    _map.Render(view, _projection);
 
     // Display some text
     _uiRenderer.beginRendering();

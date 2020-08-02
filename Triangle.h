@@ -15,6 +15,8 @@ protected:
     uint32_t _mvp;
     uint32_t _mv;
     uint32_t _mvit;
+    uint32_t _m;
+    uint32_t _texid;
 
     uint32_t _nVertex;
 
@@ -28,6 +30,7 @@ public:
     Triangle(void);
     ~Triangle(void);
 
+    virtual void ActiveTexture(void);
     void Update(float angle);
     bool Init(pvr::Shell *shell, uint32_t* mvpLoc);
     void Render(glm::mat4 view, glm::mat4 projection);
@@ -37,5 +40,13 @@ public:
 class Cube : public Triangle
 {
 public:
+    void ActiveTexture(void){};
+    bool Init(pvr::Shell *shell, uint32_t* mvpLoc);
+};
+
+class CubeMap : public Triangle
+{
+public:
+    void ActiveTexture(void);
     bool Init(pvr::Shell *shell, uint32_t* mvpLoc);
 };
