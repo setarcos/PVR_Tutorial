@@ -3,42 +3,12 @@
 #include "Triangle.h"
 #include "HelloPVR.h"
 
-const char* sUniformNames[] = {
-    "MVPMatrix", "MVMatrix", "MVITMatrix", "MMatrix", "LightPosition",
-    "LightColor", "sTexture", "sCubeMap"
+const char* sUniformNames[eNumUniforms] = {
+    "MVPMatrix", "MVMatrix", "MVITMatrix", "MMatrix", "MITMatrix",
+    "LightPosition", "CamPosition", "LightColor", "sTexture", "sCubeMap"
 };
 
 GLuint uniLoc[eNumUniforms];
-
-/*!*********************************************************************************************************************
- To use the shell, you have to inherit a class from PVRShell
- and implement the five virtual functions which describe how your application initializes, runs and releases the resources.
-***********************************************************************************************************************/
-class HelloPVR : public pvr::Shell
-{
-    pvr::EglContext _context;
-    // UIRenderer used to display text
-    pvr::ui::UIRenderer _uiRenderer;
-    GLuint _program;
-    GLuint _vbo;
-
-    Triangle _triangle;
-    Cube _cube;
-    CubeMap _map;
-
-    glm::vec3 _camPosition;
-    glm::mat4 _projection;
-    float _camTheta;
-    float _camRho;
-
-public:
-    // following function must be override
-    virtual pvr::Result initApplication();
-    virtual pvr::Result initView();
-    virtual pvr::Result renderFrame();
-    virtual pvr::Result releaseView();
-    virtual pvr::Result quitApplication();
-};
 
 /*!*********************************************************************************************************************
 \return Return Result::Success if no error occurred
@@ -77,7 +47,7 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES CubeMap Texture");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES CubeMap Texture with Reflection");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
     static const char* attribs[] = {"inVertex", "inTexColor", "inNormal"};
@@ -117,10 +87,6 @@ pvr::Result HelloPVR::initView()
 ***********************************************************************************************************************/
 pvr::Result HelloPVR::releaseView()
 {
-    // Release Vertex buffer object.
-    if (_vbo)
-        gl::DeleteBuffers(1, &_vbo);
-
     // Frees the OpenGL handles for the program and the 2 shaders
     gl::DeleteProgram(_program);
     return pvr::Result::Success;
@@ -148,6 +114,7 @@ pvr::Result HelloPVR::renderFrame()
         if (_camRho > 1) _camRho -= 0.1f;
 
     _camPosition = glm::vec3(_camRho * cos(_camTheta), 0, _camRho * sin(_camTheta));
+    gl::Uniform3fv(uniLoc[eCamPosition], 1, glm::value_ptr(_camPosition));
     glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -157,7 +124,7 @@ pvr::Result HelloPVR::renderFrame()
     gl::Uniform4fv(uniLoc[eLightColor], 1, glm::value_ptr(lightColor));
 
     _map.SetPosition(_camPosition.x, _camPosition.y, _camPosition.z);
-    _triangle.Update(0.01f);
+    _triangle.Update(0.005f);
     _cube.Update(-0.005f);
 
     _triangle.Render(view, _projection);

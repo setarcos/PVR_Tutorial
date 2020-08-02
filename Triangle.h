@@ -16,6 +16,7 @@ protected:
     uint32_t _mv;
     uint32_t _mvit;
     uint32_t _m;
+    uint32_t _mit;
     uint32_t _texid;
 
     uint32_t _nVertex;
@@ -35,6 +36,7 @@ public:
     bool Init(pvr::Shell *shell, uint32_t* mvpLoc);
     void Render(glm::mat4 view, glm::mat4 projection);
     void SetPosition(float x, float y, float z);
+    void SaveLoc(uint32_t* mvpLoc);
 };
 
 class Cube : public Triangle

@@ -6,11 +6,14 @@ uniform mediump mat4    MVPMatrix;
 uniform mediump mat4    MVMatrix;
 uniform mediump mat4    MMatrix;
 uniform mediump mat3    MVITMatrix;
+uniform mediump mat3    MITMatrix;
+uniform mediump vec3    CamPosition;
 
 varying mediump vec3    texture_or_color;
 varying highp   vec3    transNormal;
 varying highp   vec3    transPos;
 varying highp   vec3    worldPos;
+varying highp   vec3    reflectDir;
 
 void main(void)
 {
@@ -20,4 +23,7 @@ void main(void)
     transPos = vec3(MVMatrix * vec4(inVertex, 1.0));
     transNormal = normalize(MVITMatrix * inNormal);
     worldPos = vec3(MMatrix * vec4(inVertex, 1.0));
+    mediump vec3 worldNormal = normalize(MITMatrix * inNormal);
+    mediump vec3 worldCamDir = worldPos - CamPosition;
+    reflectDir = reflect(worldCamDir, worldNormal);
 }

@@ -2,7 +2,8 @@
 #include "HelloPVR.h"
 
 Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0), _mv(0), _mvit(0),
-    _texid(0), _nVertex(0), _position(glm::mat4(1.0f)), _rotation(glm::mat4(1.0f))
+    _mit(0), _texid(0), _nVertex(0), _position(glm::mat4(1.0f)),
+    _rotation(glm::mat4(1.0f))
 {
 }
 
@@ -30,15 +31,15 @@ bool Triangle::Init(pvr::Shell* shell, uint32_t* mvpLoc)
                              0.0f, 0.0f, 1.0f,      // Normal 3
                              //Vertex 1
                             -0.4f, -0.4f, -0.0f,    // Position 1
-                             0.5f, 0.0f, 1.0f,      // Color 1
+                             4.0f, 0.0f, 1.0f,      // Color 1
                              0.0f, 0.0f, -1.0f,      // Normal 1
                              // Vertex 3
                              0.0f,  0.4f, -0.0f,    // Position 3
-                             0.5f, 0.0f, 1.0f,      // Color 3
+                             4.0f, 0.0f, 1.0f,      // Color 3
                              0.0f, 0.0f, -1.0f,      // Normal 3
                              // Vertex 2
                              0.4f, -0.4f, -0.0f,    // Position 2
-                             0.5f, 0.0f, 1.0f,      // Color 2
+                             4.0f, 0.0f, 1.0f,      // Color 2
                              0.0f, 0.0f, -1.0f,      // Normal 2
                              };
 
@@ -62,14 +63,20 @@ bool Triangle::Init(pvr::Shell* shell, uint32_t* mvpLoc)
     gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Save the MVP matrix location for later use
+    SaveLoc(mvpLoc);
+    _nVertex = 6;
+
+    return true;
+}
+
+void Triangle::SaveLoc(uint32_t *mvpLoc)
+{
     _mvp = mvpLoc[eMVPMatrix];
     _mv = mvpLoc[eMVMatrix];
     _mvit = mvpLoc[eMVITMatrix];
     _m = mvpLoc[eMMatrix];
+    _mit = mvpLoc[eMITMatrix];
     _texid = mvpLoc[eTexture];
-    _nVertex = 6;
-
-    return true;
 }
 
 void Triangle::Update(float angle)
@@ -91,6 +98,8 @@ void Triangle::Render(glm::mat4 view, glm::mat4 projection)
     glm::mat3 modelViewIT = glm::inverseTranspose(modelView);
     gl::UniformMatrix3fv(_mvit, 1, GL_FALSE, glm::value_ptr(modelViewIT));
     gl::UniformMatrix4fv(_m, 1, GL_FALSE, glm::value_ptr(model));
+    glm::mat3 modelIT = glm::inverseTranspose(model);
+    gl::UniformMatrix3fv(_mit, 1, GL_FALSE, glm::value_ptr(modelIT));
 
     ActiveTexture();
     // Bind the VBO
@@ -182,10 +191,7 @@ bool Cube::Init(pvr::Shell *shell, uint32_t* mvpLoc)
     // Unbind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, 0);
     // Save the MVP matrix location for later use
-    _mvp = mvpLoc[eMVPMatrix];
-    _mv = mvpLoc[eMVMatrix];
-    _mvit = mvpLoc[eMVITMatrix];
-    _m = mvpLoc[eMMatrix];
+    SaveLoc(mvpLoc);
 
     _nVertex = 36;
     return true;
@@ -241,10 +247,7 @@ bool CubeMap::Init(pvr::Shell *shell, uint32_t* mvpLoc)
     gl::TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     // Save the MVP matrix location for later use
-    _mvp = mvpLoc[eMVPMatrix];
-    _mv = mvpLoc[eMVMatrix];
-    _mvit = mvpLoc[eMVITMatrix];
-    _m = mvpLoc[eMMatrix];
+    SaveLoc(mvpLoc);
     _texid = mvpLoc[eSkyBox];
 
     _nVertex = 36;
