@@ -4,6 +4,7 @@ PVRSDKINC=$(PVRSDK)/include
 CDEFINE=-DX11
 TARGET=HelloPVR
 SRC=$(wildcard *.cpp)
+INC=$(wildcard *.h)
 OBJ=$(patsubst %.cpp,%.o, $(SRC))
 LIBS=$(PVRSDK)/build/framework/PVRShell/libPVRShell.a \
 	 $(PVRSDK)/build/framework/PVRCore/libPVRCore.a \
@@ -11,7 +12,7 @@ LIBS=$(PVRSDK)/build/framework/PVRShell/libPVRShell.a \
 	 $(PVRSDK)/build/framework/PVRUtils/OpenGLES/libPVRUtilsGles.a \
 	 $(PVRSDK)/build/framework/PVRCore/libPVRCore.a
 all: $(TARGET)
-%.o: %.cpp
+%.o: %.cpp $(INC)
 	g++ $(CDEFINE) $< -I$(PVRFRAME) -I$(PVRSDKINC) -c
 
 $(TARGET): $(OBJ)
