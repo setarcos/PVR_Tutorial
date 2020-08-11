@@ -17,7 +17,6 @@ protected:
     uint32_t _mvit;
     uint32_t _m;
     uint32_t _mit;
-    uint32_t _texid;
 
     uint32_t _nVertex;
 

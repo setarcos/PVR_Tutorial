@@ -2,7 +2,7 @@
 #include "HelloPVR.h"
 
 Triangle::Triangle(void) : _vbo(0), _texture(0), _mvp(0), _mv(0), _mvit(0),
-    _texid(0), _nVertex(0), _position(glm::mat4(1.0f)), _rotation(glm::mat4(1.0f))
+    _nVertex(0), _position(glm::mat4(1.0f)), _rotation(glm::mat4(1.0f))
 {
 }
 
@@ -66,7 +66,6 @@ bool Triangle::Init(pvr::Shell* shell, uint32_t* mvpLoc)
     _mv = mvpLoc[eMVMatrix];
     _mvit = mvpLoc[eMVITMatrix];
     _m = mvpLoc[eMMatrix];
-    _texid = mvpLoc[eTexture];
     _nVertex = 6;
 
     return true;
@@ -113,7 +112,6 @@ void Triangle::ActiveTexture(void)
 {
     gl::ActiveTexture(GL_TEXTURE0);
     gl::BindTexture(GL_TEXTURE_2D, _texture);
-    gl::Uniform1i(_texid, 0);
 }
 
 void Triangle::SetPosition(float x, float y, float z)
@@ -245,7 +243,6 @@ bool CubeMap::Init(pvr::Shell *shell, uint32_t* mvpLoc)
     _mv = mvpLoc[eMVMatrix];
     _mvit = mvpLoc[eMVITMatrix];
     _m = mvpLoc[eMMatrix];
-    _texid = mvpLoc[eSkyBox];
 
     _nVertex = 36;
     return true;
@@ -255,5 +252,4 @@ void CubeMap::ActiveTexture(void)
 {
     gl::ActiveTexture(GL_TEXTURE1);
     gl::BindTexture(GL_TEXTURE_CUBE_MAP,  _texture);
-    gl::Uniform1i(_texid, 1);
 }

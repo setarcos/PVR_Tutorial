@@ -60,6 +60,10 @@ pvr::Result HelloPVR::initView()
     for (int i = 0; i < eNumUniforms; ++i)
         uniLoc[i] = gl::GetUniformLocation(_program, sUniformNames[i]);
 
+    gl::UseProgram(_program);
+    gl::Uniform1i(uniLoc[eTexture], 0);
+    gl::Uniform1i(uniLoc[eSkyBox], 1);
+
     if ((!_triangle.Init(this, uniLoc)) || (!_cube.Init(this, uniLoc))
             || (!_map.Init(this, uniLoc)))
     {
@@ -101,8 +105,6 @@ pvr::Result HelloPVR::renderFrame()
     //  Clears the color buffer. glClear() can also be used to clear the depth or stencil buffer
     //  (GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
     gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    gl::UseProgram(_program);
 
     if (pvr::Shell::isKeyPressed(pvr::Keys::Left))
         _camTheta += 0.01f;
