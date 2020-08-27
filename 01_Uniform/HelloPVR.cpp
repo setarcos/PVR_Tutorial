@@ -114,10 +114,10 @@ pvr::Result HelloPVR::renderFrame()
     //  (GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
     gl::Clear(GL_COLOR_BUFFER_BIT);
 
-    //  Bind the projection model view matrix (PMVMatrix) to
+    //  Bind the projection model view matrix (PVMMatrix) to
     //  the associated uniform variable in the shader
     // First gets the location of that variable in the shader using its name
-    int i32Location = gl::GetUniformLocation(_program, "myPMVMatrix");
+    int i32Location = gl::GetUniformLocation(_program, "myPVMMatrix");
     gl::UseProgram(_program);
 
     // Then passes the matrix to that variable

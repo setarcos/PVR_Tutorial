@@ -1,6 +1,6 @@
 attribute highp vec4    myVertex;
-uniform mediump mat4    myPMVMatrix;
+uniform mediump mat4    myPVMMatrix;
 void main(void)
 {
-    gl_Position = myPMVMatrix * myVertex;
+    gl_Position = myPVMMatrix * myVertex;
 }

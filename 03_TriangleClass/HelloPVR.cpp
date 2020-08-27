@@ -70,7 +70,7 @@ pvr::Result HelloPVR::initView()
            "FragShader.fsh", attribs, attribIndices, 1, 0, 0);
 
     // Store the location of uniforms for later use
-    uint32_t mvpLoc = gl::GetUniformLocation(_program, "myPMVMatrix");
+    uint32_t mvpLoc = gl::GetUniformLocation(_program, "myPVMMatrix");
 
     if (!_triangle.Init(this, mvpLoc))
     {
