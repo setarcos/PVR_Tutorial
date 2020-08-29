@@ -6,7 +6,6 @@ TARGET=HelloPVR
 SRC=$(wildcard *.cpp)
 OBJ=$(patsubst %.cpp,%.o, $(SRC))
 LIBS=$(PVRSDK)/build/framework/PVRShell/libPVRShell.a \
-	 $(PVRSDK)/build/framework/PVRCore/libPVRCore.a \
 	 $(PVRSDK)/build/framework/PVRAssets/libPVRAssets.a \
 	 $(PVRSDK)/build/framework/PVRUtils/OpenGLES/libPVRUtilsGles.a \
 	 $(PVRSDK)/build/framework/PVRCore/libPVRCore.a
