@@ -26,7 +26,7 @@ void main (void)
         specular = vec4(0.0);
     }
     if (texture_or_color.r > 1.0)
-        gl_FragColor = texture2D(sTexture, vec2(texture_or_color.g, texture_or_color.b)) * diffuse + specular;
+        gl_FragColor = texture2D(sTexture, texture_or_color.gb) * diffuse + specular;
     else
         gl_FragColor = vec4(texture_or_color, 1.0) * diffuse + specular;
 }

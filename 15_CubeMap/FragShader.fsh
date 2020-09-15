@@ -34,7 +34,7 @@ void main (void)
     }
     if (texture_or_color.r > 1.0) {
         if (texture_or_color.r < 2.5)
-            gl_FragColor = texture2D(sTexture, vec2(texture_or_color.g, texture_or_color.b)) * vec4(diffuse, 1.0) + vec4(specular, 0.0);
+            gl_FragColor = texture2D(sTexture, texture_or_color.gb) * vec4(diffuse, 1.0) + vec4(specular, 0.0);
         else
             gl_FragColor = textureCube(sCubeMap, normalize(worldPos));
     }
