@@ -39,7 +39,7 @@ void main (void)
         if (texture_or_color.r == 3.0)
             gl_FragColor = textureCube(sCubeMap, normalize(worldPos));
         if (texture_or_color.r == 4.0)
-            gl_FragColor = textureCube(sCubeMap, reflectDir) + vec4(specular, 0.0);
+            gl_FragColor = textureCube(sCubeMap, reflectDir) + vec4(pow(specular,vec3(20.0)), 0.0);
     }
     else
         gl_FragColor = vec4(texture_or_color * diffuse + specular, 1.0);
