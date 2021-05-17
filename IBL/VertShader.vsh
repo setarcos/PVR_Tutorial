@@ -8,6 +8,8 @@ layout(location = 0) out highp vec3 outWorldPos;
 layout(location = 1) out mediump vec3 outNormal;
 layout(location = 2) flat out mediump int outInstanceIndex;
 layout(location = 3) out mediump vec2 outTexCoord;
+layout(location = 4) out mediump vec3 outTangent;
+layout(location = 5) out mediump vec3 outBitTangent;
 
 uniform highp mat4 VPMatrix;
 uniform highp vec3 camPos;
@@ -15,6 +17,11 @@ uniform highp vec3 camPos;
 void main(void)
 {
     outTexCoord = inTexCoord;
+    // Scale 22.0 times
     highp vec4 posTmp = vec4(inVertex, 1.0) * vec4(22.0, 22.0, 22.0, 1.0);
+    outNormal = normalize(inNormal);
+    outTangent = inTangent.xyz;
+    outBitTangent = cross(inNormal, inTangent.xyz) * inTangent.w;
+    outWorldPos = posTmp.xyz;
     gl_Position = VPMatrix * posTmp;
 }

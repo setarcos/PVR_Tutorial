@@ -16,8 +16,21 @@ layout(location = 3) in mediump vec2 inTexCoord;
 layout(location = 4) in mediump vec3 inTangent;
 layout(location = 5) in mediump vec3 inBitTangent;
 
+mediump vec3 perturbNormal()
+{
+    // transform the tangent space normal into model space.
+    mediump vec3 tangentNormal = texture(normalMap, inTexCoord).xyz * 2.0 - 1.0;
+    mediump vec3 n = normalize(inNormal);
+    mediump vec3 t = normalize(inTangent);
+    mediump vec3 b = normalize(inBitTangent);
+    return normalize(mat3(t, b, n) * tangentNormal);
+}
+
 void main (void)
 {
+    mediump vec3 lightDir = vec3(-1.0);
     mediump vec4 albedo = texture(albedoMap, inTexCoord);
-    outColor = albedo;
+    mediump vec3 N = perturbNormal();
+    highp float brightness = max(dot(N, lightDir), 0.0) + 0.2;
+    outColor = albedo * brightness;
 }
