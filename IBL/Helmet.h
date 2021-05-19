@@ -12,6 +12,7 @@ private:
     GLuint _cpos;
     GLuint _brdf;
     GLuint _sampler;
+    GLuint _emissive;
     std::vector<GLuint> _textures;
 
 public:

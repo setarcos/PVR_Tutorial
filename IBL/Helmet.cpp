@@ -30,6 +30,7 @@ void Helmet::Init(pvr::Shell* assetProvider)
     _vertexConfiguration = createInputAssemblyFromMesh(mesh, vertexBindings, ARRAY_SIZE(vertexBindings));
     _vp = gl::GetUniformLocation(_program, "VPMatrix");
     _cpos = gl::GetUniformLocation(_program, "camPos");
+    _emissive = gl::GetUniformLocation(_program, "emissiveIntensity");
     GLuint mips = gl::GetUniformLocation(_program, "numPrefilteredMipLevels");
     gl::UseProgram(_program);
     gl::Uniform1ui(mips, numMips);
@@ -131,6 +132,10 @@ void Helmet::Render(const glm::mat4& viewProj, const glm::vec3& eyePos)
     gl::UseProgram(_program);
     gl::UniformMatrix4fv(_vp, 1, GL_FALSE, glm::value_ptr(viewProj));
     gl::Uniform3fv(_cpos, 1, glm::value_ptr(eyePos));
+    static float emissiveStrenth = 1.0;
+    emissiveStrenth += 0.1;
+    if (emissiveStrenth > 3.14) emissiveStrenth = 0;
+    gl::Uniform1f(_emissive, std::abs(glm::cos(emissiveStrenth)) * 1.1 + 0.5f);
     for (uint32_t i = 0; i < _model->getNumMeshNodes(); ++i) {
         RenderMesh(i);
     }
