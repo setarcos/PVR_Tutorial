@@ -23,5 +23,6 @@ void main(void)
     outTangent = inTangent.xyz;
     outBitTangent = cross(inNormal, inTangent.xyz) * inTangent.w;
     outWorldPos = posTmp.xyz;
+    outInstanceIndex = gl_InstanceID;
     gl_Position = VPMatrix * posTmp;
 }

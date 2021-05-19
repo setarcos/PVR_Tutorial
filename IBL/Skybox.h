@@ -14,4 +14,5 @@ public:
     void Init(pvr::Shell* shell);
     void CleanUp(void);
     void Render(const glm::mat4& viewProj, const glm::vec3& eyePos);
+    GLuint GetEnvironmentMap() {return _skyBoxMap;}
 };

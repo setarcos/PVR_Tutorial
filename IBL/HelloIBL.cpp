@@ -60,7 +60,8 @@ pvr::Result HelloIBL::initView()
 
     _skybox->Init(this);
     _helmet->Init(this);
-
+    _helmet->SetSamplers();
+    _helmet->SetEnvironmentMap(_skybox->GetEnvironmentMap());
     // Enable culling
     gl::Enable(GL_CULL_FACE);
     return pvr::Result::Success;

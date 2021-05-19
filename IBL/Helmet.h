@@ -10,11 +10,15 @@ private:
     GLuint _program;
     GLuint _vp;
     GLuint _cpos;
+    GLuint _brdf;
+    GLuint _sampler;
     std::vector<GLuint> _textures;
 
 public:
     void Init(pvr::Shell* assetProvider);
     void Render(const glm::mat4& viewProj, const glm::vec3& eyePos);
     void RenderMesh(uint32_t meshNodeId);
+    void SetEnvironmentMap(GLuint mapId);
+    void SetSamplers(void);
     ~Helmet(void);
 };
