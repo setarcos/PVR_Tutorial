@@ -1,13 +1,17 @@
+#version 310 es
+
 uniform mediump sampler2D sTexture;
 uniform mediump samplerCube sCubeMap;
 uniform mediump vec3 LightPosition;
 uniform mediump vec4 LightColor;
 
-varying mediump vec3 texture_or_color;
-varying highp   vec3 transNormal;
-varying highp   vec3 transPos;
-varying highp   vec3 worldPos;
-varying highp   vec3 reflectDir;
+in mediump vec3 texture_or_color;
+in highp   vec3 transNormal;
+in highp   vec3 transPos;
+in highp   vec3 worldPos;
+in highp   vec3 reflectDir;
+
+out mediump vec4 outColor;
 
 const highp float shininess = 80.0;
 
@@ -35,12 +39,12 @@ void main (void)
     }
     if (texture_or_color.r > 1.0) {
         if (texture_or_color.r == 2.0)
-            gl_FragColor = texture2D(sTexture, texture_or_color.gb) * vec4(diffuse, 1.0) + vec4(specular, 0.0);
+            outColor = texture2D(sTexture, texture_or_color.gb) * vec4(diffuse, 1.0) + vec4(specular, 0.0);
         if (texture_or_color.r == 3.0)
-            gl_FragColor = textureCube(sCubeMap, normalize(worldPos));
+            outColor = textureCube(sCubeMap, normalize(worldPos));
         if (texture_or_color.r == 4.0)
-            gl_FragColor = textureCube(sCubeMap, reflectDir) + vec4(pow(specular,vec3(20.0)), 0.0);
+            outColor = textureCube(sCubeMap, reflectDir) + vec4(pow(specular,vec3(20.0)), 0.0);
     }
     else
-        gl_FragColor = vec4(texture_or_color * diffuse + specular, 1.0);
+        outColor = vec4(texture_or_color * diffuse + specular, 1.0);
 }

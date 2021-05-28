@@ -1,6 +1,8 @@
+#version 310 es
 uniform mediump sampler2D sTexture;
-varying mediump vec2 TexCoord;
+in mediump vec2 TexCoord;
+out mediump vec4 outColor;
 void main (void)
 {
-    gl_FragColor = texture2D(sTexture, TexCoord);
+    outColor = texture2D(sTexture, TexCoord);
 }

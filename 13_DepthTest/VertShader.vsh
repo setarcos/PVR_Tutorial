@@ -1,13 +1,14 @@
-attribute highp vec3    inVertex;
-attribute mediump vec3  inTexColor;
-attribute mediump vec3  inNormal;
+#version 310 es
+in highp vec3    inVertex;
+in mediump vec3  inTexColor;
+in mediump vec3  inNormal;
 
 uniform mediump mat4    MVPMatrix;
 uniform mediump mat3    MVITMatrix;
 uniform mediump vec3    LightDirection;
 
-varying mediump vec3    texture_or_color;
-varying mediump float   brightness;
+out mediump vec3    texture_or_color;
+out mediump float   brightness;
 
 void main(void)
 {

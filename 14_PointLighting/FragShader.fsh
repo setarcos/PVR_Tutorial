@@ -1,10 +1,13 @@
+#version 310 es
 uniform mediump sampler2D sTexture;
 uniform mediump vec3 LightPosition;
 uniform mediump vec4 LightColor;
 
-varying mediump vec3 texture_or_color;
-varying highp   vec3 transNormal;
-varying highp   vec3 transPos;
+in mediump vec3 texture_or_color;
+in highp   vec3 transNormal;
+in highp   vec3 transPos;
+
+out mediump vec4 outColor;
 
 const highp float shininess = 20.0;
 
@@ -26,7 +29,7 @@ void main (void)
         specular = vec4(0.0);
     }
     if (texture_or_color.r > 1.0)
-        gl_FragColor = texture2D(sTexture, texture_or_color.gb) * diffuse + specular;
+        outColor = texture2D(sTexture, texture_or_color.gb) * diffuse + specular;
     else
-        gl_FragColor = vec4(texture_or_color, 1.0) * diffuse + specular;
+        outColor = vec4(texture_or_color, 1.0) * diffuse + specular;
 }

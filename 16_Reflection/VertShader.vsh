@@ -1,6 +1,8 @@
-attribute highp   vec3  inVertex;
-attribute mediump vec3  inTexColor;
-attribute mediump vec3  inNormal;
+#version 310 es
+
+in highp   vec3  inVertex;
+in mediump vec3  inTexColor;
+in mediump vec3  inNormal;
 
 uniform mediump mat4    MVPMatrix;
 uniform mediump mat4    MVMatrix;
@@ -9,11 +11,11 @@ uniform mediump mat3    MVITMatrix;
 uniform mediump mat3    MITMatrix;
 uniform mediump vec3    CamPosition;
 
-varying mediump vec3    texture_or_color;
-varying highp   vec3    transNormal;
-varying highp   vec3    transPos;
-varying highp   vec3    worldPos;
-varying highp   vec3    reflectDir;
+out mediump vec3    texture_or_color;
+out highp   vec3    transNormal;
+out highp   vec3    transPos;
+out highp   vec3    worldPos;
+out highp   vec3    reflectDir;
 
 void main(void)
 {

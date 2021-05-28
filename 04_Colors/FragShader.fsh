@@ -1,5 +1,7 @@
-varying mediump vec4 fColor;
+#version 310 es
+in mediump vec4 fColor;
+out mediump vec4 outColor;
 void main (void)
 {
-    gl_FragColor = fColor;
+    outColor = fColor;
 }
