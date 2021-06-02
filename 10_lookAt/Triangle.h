@@ -8,9 +8,6 @@ private:
     // VBO handle
     uint32_t _vbo;
 
-    // Texture handle
-    uint32_t _texture;
-
     // MVP Matrix location
     uint32_t _mvp;
 

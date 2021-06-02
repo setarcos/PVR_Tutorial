@@ -62,7 +62,7 @@ pvr::Result HelloPVR::initView()
     _uiRenderer.getDefaultTitle()->setText("OpenGLES Perspective Matrix");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
-    static const char* attribs[] = {"inVertex", "inTexCoord"};
+    static const char* attribs[] = {"inVertex", "inColor"};
     static const uint16_t attribIndices[] = {0, 1};
 
     _program = pvr::utils::createShaderProgram(*this, "VertShader.vsh",

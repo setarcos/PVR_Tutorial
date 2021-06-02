@@ -1,10 +1,10 @@
 #version 310 es
 in highp vec4    inVertex;
-in mediump vec2  inTexCoord;
+in mediump vec3  inColor;
 uniform mediump mat4    MVPMatrix;
-out mediump vec2    TexCoord;
+out mediump vec3    fColor;
 void main(void)
 {
     gl_Position = MVPMatrix * inVertex;
-    TexCoord = inTexCoord;
+    fColor = inColor;
 }

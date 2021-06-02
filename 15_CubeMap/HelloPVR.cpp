@@ -4,8 +4,7 @@
 #include "HelloPVR.h"
 
 const char* sUniformNames[] = {
-    "MVPMatrix", "MVMatrix", "MVITMatrix", "MMatrix", "LightPosition",
-    "LightColor", "sTexture", "sCubeMap"
+    "MVPMatrix", "MMatrix", "sTexture", "sCubeMap"
 };
 
 GLuint uniLoc[eNumUniforms];
@@ -80,11 +79,11 @@ pvr::Result HelloPVR::initView()
     _uiRenderer.getDefaultTitle()->setText("OpenGLES CubeMap Texture");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
-    static const char* attribs[] = {"inVertex", "inTexColor", "inNormal"};
-    static const uint16_t attribIndices[] = {0, 1, 2};
+    static const char* attribs[] = {"inVertex", "inTexColor"};
+    static const uint16_t attribIndices[] = {0, 1};
 
     _program = pvr::utils::createShaderProgram(*this, "VertShader.vsh",
-           "FragShader.fsh", attribs, attribIndices, 3, 0, 0);
+           "FragShader.fsh", attribs, attribIndices, 2, 0, 0);
 
     // Store the location of uniforms for later use
     for (int i = 0; i < eNumUniforms; ++i)
@@ -150,13 +149,8 @@ pvr::Result HelloPVR::renderFrame()
         if (_camRho > 1) _camRho -= 0.1f;
 
     _camPosition = glm::vec3(_camRho * cos(_camTheta), 0, _camRho * sin(_camTheta));
-    glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     glm::mat4 view = glm::lookAt(_camPosition, glm::vec3(0,0,0), glm::vec3(0, 1, 0));
-    glm::vec3 viewLightPositon = glm::vec3((view * glm::vec4(lightPosition, 1)));
-    gl::Uniform3fv(uniLoc[eLightPosition], 1, glm::value_ptr(viewLightPositon));
-    gl::Uniform4fv(uniLoc[eLightColor], 1, glm::value_ptr(lightColor));
 
     _map.SetPosition(_camPosition.x, _camPosition.y, _camPosition.z);
     _triangle.Update(0.01f);
