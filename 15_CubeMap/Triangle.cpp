@@ -127,7 +127,7 @@ bool Cube::Init(pvr::Shell *shell, uint32_t* mvpLoc)
          1,-1, 1, -1,-1, 1, -1,-1,-1, // Bottom
     };
 
-    GLfloat vbodata[12 * 3 * 9];
+    GLfloat vbodata[12 * 3 * 6];
     static const GLfloat facecolor[] =
     {
         0.0f, 1.0f, 0.0f, // Green
@@ -182,7 +182,7 @@ bool CubeMap::Init(pvr::Shell *shell, uint32_t* mvpLoc)
        -1,-1, 1,  1,-1, 1,  -1,-1,-1, // Bottom
     };
 
-    GLfloat vbodata[12 * 3 * 9];
+    GLfloat vbodata[12 * 3 * 6];
     static const float CS = 25.0f; // Cube size
 
     for (int i = 0; i < 6; ++i) {
