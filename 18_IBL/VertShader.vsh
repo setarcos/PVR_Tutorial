@@ -6,7 +6,6 @@ layout(location = 3)in highp   vec4 inTangent;
 
 layout(location = 0) out highp vec3 outWorldPos;
 layout(location = 1) out mediump vec3 outNormal;
-layout(location = 2) flat out mediump int outInstanceIndex;
 layout(location = 3) out mediump vec2 outTexCoord;
 layout(location = 4) out mediump vec3 outTangent;
 layout(location = 5) out mediump vec3 outBitTangent;
@@ -23,6 +22,5 @@ void main(void)
     outTangent = inTangent.xyz;
     outBitTangent = cross(inNormal, inTangent.xyz) * inTangent.w;
     outWorldPos = posTmp.xyz;
-    outInstanceIndex = gl_InstanceID;
     gl_Position = VPMatrix * posTmp;
 }

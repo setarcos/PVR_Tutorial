@@ -24,7 +24,6 @@ uniform mediump float emissiveIntensity;
 
 layout(location = 0) in highp vec3 inWorldPos;
 layout(location = 1) in mediump vec3 inNormal;
-layout(location = 2) in mediump flat int inInstanceIndex;
 layout(location = 3) in mediump vec2 inTexCoord;
 layout(location = 4) in mediump vec3 inTangent;
 layout(location = 5) in mediump vec3 inBitTangent;
