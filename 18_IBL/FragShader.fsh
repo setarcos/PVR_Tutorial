@@ -68,56 +68,9 @@ mediump float g_schlicksmithGGX(mediump float dotNL, mediump float dotNV, medium
 
 // Fresnel function (Shlicks)
 // http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
-mediump vec3 f_schlick(mediump float cosTheta, mediump vec3 F0)
-{
-    // OPTIMIZED.
-    return F0 + (vec3(1.0) - F0) * pow(2.0, (-5.55473 * cosTheta - 6.98316) * cosTheta);
-}
-
 mediump vec3 f_schlickR(mediump float cosTheta, mediump vec3 F0, mediump float roughness)
 {
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
-}
-
-mediump vec3 computeLight(mediump vec3 V, mediump vec3 N, mediump vec3 F0, mediump vec3 albedo, mediump float metallic, mediump float roughness)
-{
-    // Directional light
-    // NOTE: we negate the light direction here because the direction was from the light source.
-    mediump vec3 L = normalize(-lightDir);
-    // half vector
-    mediump vec3 H = normalize (V + L);
-
-    mediump float dotNL = clamp(dot(N, L), 0.0, 1.0);
-    mediump vec3 color = vec3(0.0);
-
-    // light contributed only if the angle between the normal and light direction is less than equal to 90 degree.
-    if(dotNL > 0.0)
-    {
-        mediump float dotLH = clamp(dot(L, H), 0.0, 1.0);
-        mediump float dotNH = clamp(dot(N, H), 0.0, 1.0);
-        mediump float dotNV = clamp(dot(N, V), 0.0, 1.0);
-
-        ///--------  Specular BRDF: COOK-TORRANCE ---------
-        // D = Microfacet Normal distribution.
-        mediump float D = d_GGX(dotNH, roughness, H, N);
-
-        // G = Geometric Occlusion
-        mediump float G = g_schlicksmithGGX(dotNL, dotNV, roughness);
-
-        // F = Surface Reflection
-        mediump vec3 F = f_schlick(dotLH, F0);
-
-        mediump vec3 spec = F * ((D * G) / (4.0 * dotNL * dotNV + 0.001/* avoid divide by 0 */));
-
-        ///-------- DIFFUSE BRDF ----------
-        // kD factor out the lambertian diffuse based on the material's metallicity and fresenal.
-        // e.g If the material is fully metallic than it wouldn't have diffuse.
-        mediump vec3 kD =  (vec3(1.0) - F) * (1.0 - metallic);
-        mediump vec3 diff = kD * albedo * ONE_OVER_PI;
-        ///-------- DIFFUSE + SPEC ------
-        color += (diff + spec) * lightColor * dotNL; // scale the final colour based on the angle between the light and the surface normal.
-    }
-    return color;
 }
 
 mediump vec3 prefilteredReflection(mediump float roughness, mediump vec3 R)
@@ -187,10 +140,6 @@ void main (void)
     mediump vec3 F0 = mix(vec3(0.04), albedo.rgb, metallic);
 
     mediump vec3 color = vec3(0.0);
-
-    // Compute the direction light diffuse and specular
-    // highp vec3 dirLightDiffuseSpec = computeLight(V, N, F0, albedo.rgb, metallic, roughness);
-    // colour = dirLightDiffuseSpec;
 
     // IBL
     mediump vec3 envLighting = computeEnvironmentLighting(N, V, R, albedo.rgb, F0, metallic, roughness);
