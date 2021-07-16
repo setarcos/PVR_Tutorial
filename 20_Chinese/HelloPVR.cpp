@@ -60,7 +60,7 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES UI Renderer");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES UI Renderer with Chinese");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
     pvr::ui::Font hei;
