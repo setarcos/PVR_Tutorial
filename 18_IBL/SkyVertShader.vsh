@@ -8,14 +8,12 @@ uniform mediump vec3 EyePos;
 
 void main()
 {
-	const mediump vec3 positions[6]= vec3[]
+	const mediump vec3 positions[4]= vec3[]
 	(
 		vec3(-1.0f, 1.0f, 1.0f),// top left
 		vec3(-1.0f, -1.0f, 1.0f),// bottom left
-		vec3(1.0f, 1.0f, 1.0f),// top right
-		vec3(1.0f, 1.0f, 1.0f),// top right
-		vec3(-1.0f, -1.0f, 1.0f),// bottom left
-		vec3(1.0f, -1.0f, 1.0f)// bottom right
+		vec3(1.0f, -1.0f, 1.0f),// bottom right
+		vec3(1.0f, 1.0f, 1.0f)// top right
 	);
 
 	// Set position

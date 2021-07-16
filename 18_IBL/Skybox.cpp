@@ -37,7 +37,7 @@ void Skybox::Render(const glm::mat4& viewProj, const glm::vec3& eyePos)
     gl::UseProgram(_program);
     gl::UniformMatrix4fv(_ivp, 1, GL_FALSE, glm::value_ptr(glm::inverse(viewProj)));
     gl::Uniform3fv(_epos, 1, glm::value_ptr(eyePos));
-    gl::DrawArrays(GL_TRIANGLES, 0, 6);
+    gl::DrawArrays(GL_TRIANGLE_FAN, 0, 4);
     gl::Enable(GL_DEPTH_TEST);
 }
 
