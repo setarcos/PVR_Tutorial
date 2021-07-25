@@ -82,7 +82,7 @@ pvr::Result HelloPVR::initView()
 
     // Setup the text to be rendered
     _uiRenderer.init(getWidth(), getHeight(), isFullScreen(), (_context->getApiVersion() == pvr::Api::OpenGLES2) || (getBackBufferColorspace() == pvr::ColorSpace::sRGB));
-    _uiRenderer.getDefaultTitle()->setText("OpenGLES Simple Lighting");
+    _uiRenderer.getDefaultTitle()->setText("OpenGLES Model Loading");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
     static const char* attribs[] = {"inVertex", "inNormal", "inTexColor"};
