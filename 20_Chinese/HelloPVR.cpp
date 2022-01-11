@@ -67,7 +67,7 @@ pvr::Result HelloPVR::initView()
     std::unique_ptr<pvr::Stream> fontFile = this->getAssetStream("hei.pvr");
     pvr::Texture texture = pvr::textureLoad(*fontFile, pvr::TextureFileFormat::PVR); 
     hei = _uiRenderer.createFont(texture);
-    _info = _uiRenderer.createText("\xe4\xbd\xbf\xe7\x94\xa8 PVRTexTool \xe7\x94\x9f\xe6\x88\x90\xe5\xad\x97\xe4\xbd\x93", hei);
+    _info = _uiRenderer.createText("使用 PVRTexTool 生成字体。", hei);
     _info->setAnchor(pvr::ui::Anchor::TopRight, -0.3f, 0.1f);
     _info->setColor(1.0f, 0.0f, 0.0f, 1.0f);
     _info->commitUpdates();
