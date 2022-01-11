@@ -21,7 +21,7 @@ PowerVR Tutorial
     ├── 14_PointLighting
     │   ├── 17_LoadModel
     │   │   └── 19_Control
-    │   ├── 21_FrameBuffercd
+    │   ├── 21_FrameBuffer
     │   ├── 22_MSAA
     │   └── 23_Shadow
     ├── 15_CubeMap
