@@ -47,7 +47,8 @@ void Triangle::Render(glm::mat4 mVP)
     unsigned int _stride = 6 * sizeof(GLfloat);
     // Pass the View Matrix to the shader.
     // Since we are not translating the triangle we do not need a Model Matrix.
-    gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(mVP));
+    glm::mat4 scale = glm::mat4(glm::mat3(1));
+    gl::UniformMatrix4fv(_mvp, 1, GL_FALSE, glm::value_ptr(mVP * scale));
 
     // Bind the VBO
     gl::BindBuffer(GL_ARRAY_BUFFER, _vbo);

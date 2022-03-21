@@ -112,7 +112,7 @@ void Triangle::SetPosition(float x, float y, float z)
 bool Sphere::Init(pvr::Shell *shell, uint32_t* mvpLoc)
 {
     const pvr::utils::VertexBindings_Name vertexBindings[] = {{"POSITION", "inVertex"}, {"NORMAL", "inNormal"}};
-    _model = pvr::assets::loadModel(*shell, "sphere.pod");
+    _model = pvr::assets::loadModel(*shell, "icosphere.pod");
     pvr::utils::appendSingleBuffersFromModel(*_model, _vbos, _ibos);
     _vertexConfiguration = createInputAssemblyFromMesh(_model->getMesh(0), vertexBindings, ARRAY_SIZE(vertexBindings));
 
