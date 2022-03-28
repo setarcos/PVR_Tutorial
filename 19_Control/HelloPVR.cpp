@@ -97,7 +97,7 @@ pvr::Result HelloPVR::initView()
     _uiRenderer.getDefaultTitle()->setText("OpenGLES Mouse Input");
     _uiRenderer.getDefaultTitle()->commitUpdates();
 
-    _slider = new Slider(w - 200, h - 50, w, h);
+    _slider = new Slider(w - 200, 30, w, h);
     _slider->Init(this);
     _slider->SetValue(50);
 

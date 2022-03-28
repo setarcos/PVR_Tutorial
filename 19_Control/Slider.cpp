@@ -13,7 +13,7 @@ void Slider::Init(pvr::Shell* assetProvider)
     _vLoc = gl::GetUniformLocation(_program, "value");
     glm::vec2 pos;
     pos[0] = float(_xpos) / _winW * 2 - 1;
-    pos[1] = float(_ypos) / _winH * 2 - 1;
+    pos[1] = 1 - float(_ypos) / _winH * 2;
     gl::UseProgram(_program);
     gl::Uniform2fv(_pLoc, 1, glm::value_ptr(pos));
 }
@@ -43,7 +43,8 @@ void Slider::SetValue(GLuint v)
 
 void Slider::Click(pvr::PointerLocation loc)
 {
+    // std::cout << loc.x << "  " << loc.y << std::endl;
     if ((loc.x < _xpos) || (loc.x > _xpos + _winW / 2 * 0.3)) return;
-    if ((loc.y > _ypos) || (loc.x < _ypos - _winH / 2 * 0.1)) return;
+    if ((loc.y < _ypos) || (loc.y > _ypos + _winH / 2 * 0.1)) return;
     SetValue(round((loc.x - _xpos) * 200 / (_winW  * 0.3)));
 }
