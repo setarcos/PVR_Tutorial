@@ -30,11 +30,24 @@ PowerVR Tutorial
 
 平台
 ------------------
-目前仅支持 Linux 平台
+目前支持 Linux 平台和 Windows 平台
 
-编译
+Linux 平台编译
 ------------------
 * 下载 PowerVR SDK 并编译
 * 安装 libglm-dev
 * 修改 Makefile.include 指定 SDK 的位置
 * 进入到程序目录执行 make
+
+Windows 平台编译
+------------------
+* 下载 PowerVR SDK 并编译
+* 修改 base.cmake 指定 SDK 的位置
+* 打开 Visual Studio 的命令行界面
+* cd 到程序目录，执行
+```console
+    mkdir build
+    cd build
+    cmake ..
+    msbuild HelloPVR.sln
+* 可以在 Debug 目录找到目标程序
