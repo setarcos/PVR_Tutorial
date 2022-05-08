@@ -45,10 +45,9 @@ Windows 平台编译
 * 修改 base.cmake 指定 SDK 的位置
 * 打开 Visual Studio 的命令行界面
 * cd 到程序目录，执行
-```console
+    ```console
     mkdir build
     cd build
     cmake ..
     msbuild HelloPVR.sln
-
 * 可以在 Debug 目录找到目标程序
