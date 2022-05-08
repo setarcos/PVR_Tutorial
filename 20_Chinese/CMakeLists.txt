@@ -3,7 +3,7 @@
 include (../base.cmake)
 project (${TUT_PRO})
 
-add_executable (${TUT_PRO} WIN32 "HelloPVR.cpp" "Triangle.h" "Triangle.cpp")
+add_executable (${TUT_PRO} WIN32 "HelloPVR.cpp")
 
 target_include_directories(${TUT_PRO} PUBLIC ${PVR_SDK_INC})
 target_link_libraries(${TUT_PRO} PUBLIC ${PVR_SDK_LIB})
