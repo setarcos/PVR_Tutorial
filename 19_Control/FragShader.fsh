@@ -31,7 +31,7 @@ void main (void)
     highp float gamma = 2.0;
     mediump vec3 finalcolor;
     if (texture_or_color.r > 1.0)
-        finalcolor = texture2D(sTexture, texture_or_color.gb).rgb * diffuse + specular;
+        finalcolor = texture(sTexture, texture_or_color.gb).rgb * diffuse + specular;
     else
         finalcolor = texture_or_color * diffuse + specular;
     finalcolor = pow(finalcolor, vec3(gamma));

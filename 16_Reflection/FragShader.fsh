@@ -39,7 +39,7 @@ void main (void)
     }
     if (texture_or_color.r > 1.0) {
         if (texture_or_color.r == 2.0)
-            outColor = texture2D(sTexture, texture_or_color.gb) * vec4(diffuse, 1.0) + vec4(specular, 0.0);
+            outColor = texture(sTexture, texture_or_color.gb) * vec4(diffuse, 1.0) + vec4(specular, 0.0);
         if (texture_or_color.r == 3.0)
             outColor = textureCube(sCubeMap, normalize(worldPos));
         if (texture_or_color.r == 4.0)

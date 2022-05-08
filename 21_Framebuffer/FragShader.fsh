@@ -29,7 +29,7 @@ void main (void)
         specular = vec4(0.0);
     }
     if (texture_or_color.r > 1.0)
-        outColor = texture2D(sTexture, texture_or_color.gb) * diffuse + specular;
+        outColor = texture(sTexture, texture_or_color.gb) * diffuse + specular;
     else
         outColor = vec4(texture_or_color, 1.0) * diffuse + specular;
 }

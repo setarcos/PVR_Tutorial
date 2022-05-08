@@ -5,7 +5,7 @@ out mediump vec4 outColor;
 void main (void)
 {
     if (texture_or_color.r > 1.0)
-        outColor = texture2D(sTexture, texture_or_color.gb);
+        outColor = texture(sTexture, texture_or_color.gb);
     else
         outColor = vec4(texture_or_color, 1.0);
 }

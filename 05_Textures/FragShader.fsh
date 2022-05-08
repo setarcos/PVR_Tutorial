@@ -4,5 +4,5 @@ in mediump vec2 TexCoord;
 out mediump vec4 outColor;
 void main (void)
 {
-    outColor = texture2D(sTexture, TexCoord);
+    outColor = texture(sTexture, TexCoord);
 }

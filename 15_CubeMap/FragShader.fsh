@@ -11,7 +11,7 @@ void main (void)
 {
     if (texture_or_color.r > 1.0) {
         if (texture_or_color.r < 2.5)
-            outColor = texture2D(sTexture, texture_or_color.gb);
+            outColor = texture(sTexture, texture_or_color.gb);
         else
             outColor = textureCube(sCubeMap, normalize(worldPos));
     } else
