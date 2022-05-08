@@ -34,6 +34,7 @@ PowerVR Tutorial
 
 编译
 ------------------
-* 安装 PowerVR SDK
-* 修改 Makefile 指定 SDK 的位置
-* make
+* 下载 PowerVR SDK 并编译
+* 安装 libglm-dev
+* 修改 Makefile.include 指定 SDK 的位置
+* 进入到程序目录执行 make
