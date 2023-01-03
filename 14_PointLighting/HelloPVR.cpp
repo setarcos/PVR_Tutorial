@@ -152,7 +152,7 @@ pvr::Result HelloPVR::renderFrame()
 
     _camPosition = glm::vec3(_camRho * cos(_camTheta), 0, _camRho * sin(_camTheta));
     glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    glm::vec4 lightColor = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 
     glm::mat4 view = glm::lookAt(_camPosition, glm::vec3(0,0,0), glm::vec3(0, 1, 0));
     glm::vec3 viewLightPositon = glm::vec3((view * glm::vec4(lightPosition, 1)));

@@ -9,7 +9,7 @@ in highp   vec3 transPos;
 
 out mediump vec4 outColor;
 
-const highp float shininess = 20.0;
+const highp float shininess = 80.0;
 
 void main (void)
 {
