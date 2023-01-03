@@ -152,8 +152,8 @@ pvr::Result HelloPVR::renderFrame()
         _camRho -= 0.1f;
 
     _camPosition = glm::vec3(_camRho * cos(_camTheta), 0, _camRho * sin(_camTheta));
-    glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 5.0f);
+    glm::vec4 lightColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 
     glm::mat4 view = glm::lookAt(_camPosition, glm::vec3(0,0,0), glm::vec3(0, 1, 0));
     glm::vec3 viewLightPositon = glm::vec3((view * glm::vec4(lightPosition, 1)));
@@ -162,7 +162,7 @@ pvr::Result HelloPVR::renderFrame()
     gl::Uniform1i(uniLoc[eIsSphere], 0);
 
     _triangle.Update(0.01f);
-    _sphere.Update(-0.005f);
+    //_sphere.Update(-0.005f);
 
     _triangle.Render(view, _projection);
     _sphere.Render(view, _projection);

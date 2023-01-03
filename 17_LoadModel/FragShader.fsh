@@ -9,13 +9,13 @@ in highp   vec3 transPos;
 
 out mediump vec4 outColor;
 
-const highp float shininess = 20.0;
+const highp float shininess = 80.0;
 
 void main (void)
 {
     // Diffuse light
     mediump vec3 lightDirection = normalize(LightPosition - transPos);
-    highp float brightness = max(dot(transNormal, lightDirection), 0.05);
+    highp float brightness = max(dot(transNormal, lightDirection), 0.0);
     mediump vec3 diffuse = LightColor.xyz * brightness;
 
     // Specular light
@@ -28,12 +28,10 @@ void main (void)
     } else {
         specular = vec3(0.0);
     }
-    highp float gamma = 2.0;
     mediump vec3 finalcolor;
     if (texture_or_color.r > 1.0)
         finalcolor = texture(sTexture, texture_or_color.gb).rgb * diffuse + specular;
     else
-        finalcolor = texture_or_color * diffuse + specular;
-    finalcolor = pow(finalcolor, vec3(gamma));
+        finalcolor = texture_or_color * diffuse + specular + (0.1, 0.1, 0.1);
     outColor = vec4(finalcolor, 1.0);
 }

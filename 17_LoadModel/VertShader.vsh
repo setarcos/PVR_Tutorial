@@ -16,7 +16,7 @@ out highp   vec3    transPos;
 void main(void)
 {
     if (IsSphere == 1) {
-        texture_or_color = vec3(0.4, 0.8, 1.0);
+        texture_or_color = vec3(0.8, 0.8, 0.8);
     } else {
         texture_or_color = inTexColor;
     }
